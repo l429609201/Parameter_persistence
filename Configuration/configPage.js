@@ -397,7 +397,7 @@ define(['loading', 'emby-input', 'emby-button', 'emby-checkbox', 'dialogHelper',
                     var plugin = plugins.find(function (p) { return p.Id === pluginId; });
                     if (plugin) {
                         view.querySelector('#pluginVersion').textContent = 'v' + plugin.Version;
-                        var aboutVer = view.querySelector('#aboutVersion');
+                        var aboutVer = view.querySelector('#aboutVersion') || document.getElementById('aboutVersion');
                         if (aboutVer) aboutVer.textContent = plugin.Version;
                     }
                 });
