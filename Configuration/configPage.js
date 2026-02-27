@@ -57,6 +57,7 @@ define(['loading', 'emby-input', 'emby-button', 'emby-checkbox', 'dialogHelper',
             loading.hide();
             parameters = [];
             renderParameterList();
+            console.error('[ParameterPersistence] 查询失败:', error);
         });
     }
 
