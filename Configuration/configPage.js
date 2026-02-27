@@ -399,6 +399,27 @@ define(['loading', 'emby-input', 'emby-button', 'emby-checkbox', 'dialogHelper',
         view.addEventListener('viewshow', function () {
             loading.show();
 
+            // 动态检测页面背景色，给sticky表头设置不透明背景
+            try {
+                var thead = view.querySelector('#parameterTableHead');
+                if (thead) {
+                    var el = thead;
+                    var bgColor = '';
+                    while (el && el !== document.documentElement) {
+                        var cs = window.getComputedStyle(el);
+                        var bg = cs.backgroundColor;
+                        if (bg && bg !== 'transparent' && bg !== 'rgba(0, 0, 0, 0)') {
+                            bgColor = bg;
+                            break;
+                        }
+                        el = el.parentElement;
+                    }
+                    if (!bgColor) bgColor = window.getComputedStyle(document.body).backgroundColor || '#fff';
+                    var tr = thead.querySelector('tr');
+                    if (tr) tr.style.backgroundColor = bgColor;
+                }
+            } catch (e) { }
+
             ApiClient.getPluginConfiguration(pluginId).then(function (config) {
                 loadConfig(view, config);
 

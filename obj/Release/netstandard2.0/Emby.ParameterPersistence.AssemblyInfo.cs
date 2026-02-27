@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Emby.ParameterPersistence")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+877ad6359b09c5df15bebe420b83d9fa3dfeff26")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1006cdb9b4e206ff4d959e51690a362c46332ae2")]
 [assembly: System.Reflection.AssemblyProductAttribute("Emby.ParameterPersistence")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Emby.ParameterPersistence")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
