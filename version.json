@@ -1,13 +1,1 @@
-{
-  "version": "1.1.0",
-  "name": "EMBY 参数持久化插件",
-  "description": "修复Newtonsoft.Json版本不兼容问题",
-  "changelog": [
-    "🐛 修复Newtonsoft.Json版本不兼容导致所有API调用失败的严重Bug",
-    "� 去掉Newtonsoft.Json依赖，改用EMBY自带的IJsonSerializer",
-    "⚡ 减少外部依赖，提升兼容性"
-  ],
-  "breaking_changes": [],
-  "notes": "重大修复：解决JSON序列化版本不兼容问题"
-}
-
+﻿{"version":"1.1.1","name":"EMBY 参数持久化插件","description":"Create接口改为upsert模式","changelog":["Create接口改为upsert模式：参数已存在时自动更新不再报错","解决弹幕插件重复调用Create导致大量Error日志的问题"],"breaking_changes":[],"notes":"优化：Create接口支持存在则更新"}

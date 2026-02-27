@@ -129,23 +129,34 @@ namespace Emby.ParameterPersistence.Services
         public async Task<ParameterModel> CreateParameterAsync(ParameterModel parameter)
         {
             var data = await ReadDataAsync();
-            
-            // 检查是否已存在
-            var existing = data.Parameters.FirstOrDefault(p => 
+
+            // 检查是否已存在，存在则更新（upsert模式）
+            var existing = data.Parameters.FirstOrDefault(p =>
                 p.Namespace == parameter.Namespace && p.Key == parameter.Key);
-            
+
             if (existing != null)
             {
-                throw new InvalidOperationException($"参数已存在: {parameter.Namespace}.{parameter.Key}");
+                // 已存在则更新值
+                existing.Value = parameter.Value ?? existing.Value;
+                existing.Type = parameter.Type ?? existing.Type;
+                if (parameter.Description != null)
+                {
+                    existing.Description = parameter.Description;
+                }
+                existing.UpdatedAt = DateTime.UtcNow;
+
+                await WriteDataAsync(data);
+                _logger.Info($"更新已有参数: {parameter.Namespace}.{parameter.Key}");
+                return existing;
             }
 
             parameter.Id = Guid.NewGuid().ToString();
             parameter.CreatedAt = DateTime.UtcNow;
             parameter.UpdatedAt = DateTime.UtcNow;
-            
+
             data.Parameters.Add(parameter);
             await WriteDataAsync(data);
-            
+
             _logger.Info($"创建参数: {parameter.Namespace}.{parameter.Key}");
             return parameter;
         }
