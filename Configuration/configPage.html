@@ -77,10 +77,10 @@
                     <p>本插件提供参数持久化存储API，供其他插件或外部程序调用。</p>
                     <p><strong>API接口：</strong></p>
                     <ul style="margin-left: 20px;">
-                        <li>POST /emby/ParameterPersistence/Parameters/Query - 查询参数</li>
-                        <li>POST /emby/ParameterPersistence/Parameters/Create - 创建参数</li>
-                        <li>POST /emby/ParameterPersistence/Parameters/Update - 更新参数</li>
-                        <li>POST /emby/ParameterPersistence/Parameters/Delete - 删除参数</li>
+                        <li>GET /emby/ParameterPersistence/Query - 查询参数（支持 ?Namespace=xx&amp;Key=xx&amp;Keyword=xx）</li>
+                        <li>POST /emby/ParameterPersistence/Create - 创建参数（支持upsert）</li>
+                        <li>POST /emby/ParameterPersistence/Update - 更新参数</li>
+                        <li>POST /emby/ParameterPersistence/Delete - 删除参数</li>
                     </ul>
                     <p>详细API文档请查看 <a href="https://github.com/l429609201/Parameter_persistence" target="_blank">GitHub README</a></p>
                 </div>

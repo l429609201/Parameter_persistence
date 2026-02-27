@@ -43,10 +43,8 @@ define(['loading', 'emby-input', 'emby-button', 'emby-checkbox', 'dialogHelper',
         if (key) requestData.Key = key;
 
         ApiClient.ajax({
-            type: 'POST',
-            url: ApiClient.getUrl('/ParameterPersistence/Parameters/Query'),
-            data: JSON.stringify(requestData),
-            contentType: 'application/json',
+            type: 'GET',
+            url: ApiClient.getUrl('/ParameterPersistence/Query', requestData),
             dataType: 'json'
         }).then(function (response) {
             if (typeof response === 'string') {
@@ -245,7 +243,7 @@ define(['loading', 'emby-input', 'emby-button', 'emby-checkbox', 'dialogHelper',
     function saveParameter(namespace, key, value, isEdit) {
         loading.show();
 
-        var url = isEdit ? '/ParameterPersistence/Parameters/Update' : '/ParameterPersistence/Parameters/Create';
+        var url = isEdit ? '/ParameterPersistence/Update' : '/ParameterPersistence/Create';
         var requestData = {
             Namespace: namespace,
             Key: key,
@@ -286,7 +284,7 @@ define(['loading', 'emby-input', 'emby-button', 'emby-checkbox', 'dialogHelper',
 
                 ApiClient.ajax({
                     type: 'POST',
-                    url: ApiClient.getUrl('/ParameterPersistence/Parameters/Delete'),
+                    url: ApiClient.getUrl('/ParameterPersistence/Delete'),
                     data: JSON.stringify(requestData),
                     contentType: 'application/json',
                     dataType: 'json'
