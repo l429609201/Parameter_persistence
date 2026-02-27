@@ -187,9 +187,9 @@ define(['loading', 'emby-input', 'emby-button', 'emby-checkbox', 'dialogHelper',
         dialogHtml += '<div class="fieldDescription">参数的唯一标识符</div>';
         dialogHtml += '</div>';
 
-        dialogHtml += '<div class="inputContainer">';
+        dialogHtml += '<div class="inputContainer" style="margin-top:1em;">';
         dialogHtml += '<label class="inputLabel inputLabelUnfocused" for="paramValue">值 *</label>';
-        dialogHtml += '<textarea id="paramValue" is="emby-textarea" rows="8" required>' + (param ? param.Value : '') + '</textarea>';
+        dialogHtml += '<textarea id="paramValue" is="emby-textarea" rows="8" required style="width:100%;box-sizing:border-box;display:block;">' + (param ? param.Value : '') + '</textarea>';
         dialogHtml += '<div class="fieldDescription">参数的值，支持任意文本内容</div>';
         dialogHtml += '</div>';
 
@@ -307,6 +307,60 @@ define(['loading', 'emby-input', 'emby-button', 'emby-checkbox', 'dialogHelper',
         });
     }
 
+    function deleteAllParameters() {
+        require(['confirm'], function (confirm) {
+            confirm('确定要删除全部参数吗？此操作不可恢复！', '确认删除全部').then(function () {
+                loading.show();
+
+                // 先查询所有参数
+                ApiClient.ajax({
+                    type: 'GET',
+                    url: ApiClient.getUrl('/ParameterPersistence/Query'),
+                    dataType: 'json'
+                }).then(function (result) {
+                    var params = result.Data || result || [];
+                    if (params.length === 0) {
+                        loading.hide();
+                        require(['toast'], function (toast) {
+                            toast('没有可删除的参数');
+                        });
+                        return;
+                    }
+
+                    // 逐个删除所有参数
+                    var deletePromises = params.map(function (param) {
+                        return ApiClient.ajax({
+                            type: 'POST',
+                            url: ApiClient.getUrl('/ParameterPersistence/Delete'),
+                            data: JSON.stringify({ Namespace: param.Namespace, Key: param.Key }),
+                            contentType: 'application/json',
+                            dataType: 'json'
+                        });
+                    });
+
+                    Promise.all(deletePromises).then(function () {
+                        loading.hide();
+                        require(['toast'], function (toast) {
+                            toast('已删除全部 ' + params.length + ' 个参数');
+                        });
+                        queryParameters('', '');
+                    }).catch(function () {
+                        loading.hide();
+                        require(['toast'], function (toast) {
+                            toast('部分参数删除失败，请重试');
+                        });
+                        queryParameters('', '');
+                    });
+                }).catch(function () {
+                    loading.hide();
+                    require(['toast'], function (toast) {
+                        toast('获取参数列表失败');
+                    });
+                });
+            });
+        });
+    }
+
     return function (view, params) {
         currentPage = view;
 
@@ -328,6 +382,10 @@ define(['loading', 'emby-input', 'emby-button', 'emby-checkbox', 'dialogHelper',
             showParameterDialog(null);
         });
 
+        view.querySelector('#deleteAllBtn').addEventListener('click', function () {
+            deleteAllParameters();
+        });
+
         view.addEventListener('viewshow', function () {
             loading.show();
 
@@ -339,6 +397,8 @@ define(['loading', 'emby-input', 'emby-button', 'emby-checkbox', 'dialogHelper',
                     var plugin = plugins.find(function (p) { return p.Id === pluginId; });
                     if (plugin) {
                         view.querySelector('#pluginVersion').textContent = 'v' + plugin.Version;
+                        var aboutVer = view.querySelector('#aboutVersion');
+                        if (aboutVer) aboutVer.textContent = plugin.Version;
                     }
                 });
 
