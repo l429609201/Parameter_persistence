@@ -1,5 +1,5 @@
 {
-  "version": "1.0.0",
+  "version": "1.0.1",
   "name": "EMBY 参数持久化插件",
   "description": "首次正式发布",
   "changelog": [
@@ -12,6 +12,6 @@
     "📦 支持导入导出功能"
   ],
   "breaking_changes": [],
-  "notes": "本版本为API改造后的首次发布，接口数量从10个精简为5个，采用统一的设计模式。"
+  "notes": "更新"
 }
 
