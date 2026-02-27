@@ -5,6 +5,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Emby.ParameterPersistence.Models;
 using Emby.ParameterPersistence.Services;
+using MediaBrowser.Common.Configuration;
 using MediaBrowser.Controller.Net;
 using MediaBrowser.Model.Logging;
 using MediaBrowser.Model.Services;
@@ -123,18 +124,29 @@ namespace Emby.ParameterPersistence.Api
     /// </summary>
     public class ParameterController : IService
     {
-        private readonly IParameterStorageService _storageService;
         private readonly ILogger _logger;
         private readonly IAuthorizationContext _authContext;
+        private static ParameterStorageService _storageService;
+        private static readonly object _lock = new object();
 
         public ParameterController(
-            IParameterStorageService storageService,
             ILogManager logManager,
+            IApplicationPaths appPaths,
             IAuthorizationContext authContext)
         {
-            _storageService = storageService;
             _logger = logManager.GetLogger(Plugin.Instance.Name);
             _authContext = authContext;
+
+            if (_storageService == null)
+            {
+                lock (_lock)
+                {
+                    if (_storageService == null)
+                    {
+                        _storageService = new ParameterStorageService(appPaths, logManager);
+                    }
+                }
+            }
         }
 
         /// <summary>

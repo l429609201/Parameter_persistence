@@ -306,36 +306,8 @@ define(['loading', 'emby-input', 'emby-button', 'emby-checkbox', 'dialogHelper',
         });
     }
 
-    function renderParameterManagementSection() {
-        var container = document.getElementById('parameterManagementSection');
-        if (!container) return;
-
-        var html = '<div class="sectionTitleContainer flex align-items-center">' +
-            '<h2 class="sectionTitle">参数管理</h2>' +
-            '<button is="emby-button" id="addParameterBtn" type="button" class="raised button-alt headerHelpButton emby-button">' +
-            '<span>添加参数</span></button></div>' +
-            '<div style="margin: 1.5em 0;">' +
-            '<input id="searchNamespace" type="text" is="emby-input" placeholder="命名空间" style="width: 200px; margin-right: 10px;" />' +
-            '<input id="searchKey" type="text" is="emby-input" placeholder="键名" style="width: 200px; margin-right: 10px;" />' +
-            '<button is="emby-button" id="searchBtn" type="button" class="raised button-submit emby-button"><span>查询</span></button>' +
-            '<button is="emby-button" id="clearSearchBtn" type="button" class="raised emby-button" style="margin-left: 10px;"><span>清空</span></button></div>' +
-            '<div class="fieldDescription" style="margin-bottom: 1em;">共 <span id="parameterCount">0</span> 个参数</div>' +
-            '<table style="table-layout: fixed; width: 100%;"><thead><tr>' +
-            '<th style="text-align: left; width: 20%;">命名空间</th>' +
-            '<th style="text-align: left; width: 20%;">键名</th>' +
-            '<th style="text-align: left; width: 35%;">值</th>' +
-            '<th style="text-align: left; width: 15%;">更新时间</th>' +
-            '<th style="text-align: center; width: 10%;">操作</th>' +
-            '</tr></thead><tbody id="parameterList"></tbody></table>';
-
-        container.innerHTML = html;
-    }
-
     return function (view, params) {
         currentPage = view;
-
-        // 动态生成参数管理区域
-        renderParameterManagementSection();
 
         view.querySelector('#ParameterConfigForm').addEventListener('submit', onSubmit);
 

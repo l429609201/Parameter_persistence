@@ -1,72 +1,90 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-    <meta charset="utf-8">
-    <title>参数持久化</title>
-</head>
-<body>
-    <div id="ParameterConfigPage" data-role="page" class="page type-interior pluginConfigurationPage"
-        data-controller="__plugin/parameterpersistencejs"
-        data-require="emby-input,emby-button,emby-select,emby-checkbox">
-        <div data-role="content">
-            <div class="content-primary">
-                <div class="verticalSection verticalSection">
-                    <div class="sectionTitleContainer flex align-items-center">
-                        <h2 class="sectionTitle">参数持久化配置 <span id="pluginVersion" style="font-size: 0.6em; color: #00a4dc; margin-left: 0.5em;"></span></h2>
-                        <a is="emby-linkbutton" class="raised button-alt headerHelpButton emby-button" target="_blank"
-                            href="https://github.com/l429609201/Parameter_persistence">源码</a>
-                    </div>
-                </div>
-
-                <form id="ParameterConfigForm">
-                    <fieldset class="verticalSection verticalSection-extrabottompadding">
-                        <legend>
-                            <h3>基本配置</h3>
-                        </legend>
-
-                        <div class="checkboxContainer checkboxContainer-withDescription">
-                            <label class="emby-checkbox-label">
-                                <input id="EnableLogging" name="EnableLogging" type="checkbox" is="emby-checkbox" />
-                                <span>启用日志记录</span>
-                            </label>
-                            <div class="fieldDescription">开启后将记录API调用日志，便于调试和排查问题。</div>
-                        </div>
-
-                        <div class="inputContainer">
-                            <label class="inputLabel inputLabelUnfocused" for="MaxParameterCount">最大参数数量</label>
-                            <input id="MaxParameterCount" name="MaxParameterCount" type="number" is="emby-input"
-                                min="100" max="1000000" />
-                            <div class="fieldDescription">限制可存储的最大参数数量，防止存储文件过大（默认10000）。</div>
-                        </div>
-                    </fieldset>
-
-                    <div>
-                        <button is="emby-button" type="submit" class="raised button-submit block emby-button">
-                            <span>保存配置</span>
-                        </button>
-                    </div>
-                </form>
-
-                <div id="parameterManagementSection" class="verticalSection" style="margin-top: 2em;">
-                </div>
-
-                <div class="verticalSection" style="margin-top: 2em;">
-                    <h3 class="sectionTitle">使用说明</h3>
-                    <div class="fieldDescription" style="line-height: 1.8;">
-                        <p>本插件提供参数持久化存储API，供其他插件或外部程序调用。</p>
-                        <p><strong>API接口：</strong></p>
-                        <ul style="margin-left: 20px;">
-                            <li>POST /emby/ParameterPersistence/Query - 查询参数</li>
-                            <li>POST /emby/ParameterPersistence/Create - 创建参数</li>
-                            <li>POST /emby/ParameterPersistence/Update - 更新参数</li>
-                            <li>POST /emby/ParameterPersistence/Delete - 删除参数</li>
-                            <li>POST /emby/ParameterPersistence/List - 列出参数</li>
-                        </ul>
-                        <p>详细API文档请查看 <a href="https://github.com/l429609201/Parameter_persistence" target="_blank">GitHub README</a></p>
-                    </div>
+<div id="ParameterConfigPage" data-role="page" class="page type-interior pluginConfigurationPage"
+    data-controller="__plugin/parameterpersistencejs"
+    data-require="emby-input,emby-button,emby-select,emby-checkbox">
+    <div data-role="content">
+        <div class="content-primary">
+            <div class="verticalSection verticalSection">
+                <div class="sectionTitleContainer flex align-items-center">
+                    <h2 class="sectionTitle">参数持久化配置 <span id="pluginVersion" style="font-size: 0.6em; color: #00a4dc; margin-left: 0.5em;"></span></h2>
+                    <a is="emby-linkbutton" class="raised button-alt headerHelpButton emby-button" target="_blank"
+                        href="https://github.com/l429609201/Parameter_persistence">源码</a>
                 </div>
             </div>
+
+            <form id="ParameterConfigForm">
+                <fieldset class="verticalSection verticalSection-extrabottompadding">
+                    <legend>
+                        <h3>基本配置</h3>
+                    </legend>
+
+                    <div class="checkboxContainer checkboxContainer-withDescription">
+                        <label class="emby-checkbox-label">
+                            <input id="EnableLogging" name="EnableLogging" type="checkbox" is="emby-checkbox" />
+                            <span>启用日志记录</span>
+                        </label>
+                        <div class="fieldDescription">开启后将记录API调用日志，便于调试和排查问题。</div>
+                    </div>
+
+                    <div class="inputContainer">
+                        <label class="inputLabel inputLabelUnfocused" for="MaxParameterCount">最大参数数量</label>
+                        <input id="MaxParameterCount" name="MaxParameterCount" type="number" is="emby-input"
+                            min="100" max="1000000" />
+                        <div class="fieldDescription">限制可存储的最大参数数量，防止存储文件过大（默认10000）。</div>
+                    </div>
+                </fieldset>
+
+                <div>
+                    <button is="emby-button" type="submit" class="raised button-submit block emby-button">
+                        <span>保存配置</span>
+                    </button>
+                </div>
+            </form>
+
+            <fieldset class="verticalSection verticalSection-extrabottompadding" style="margin-top: 2em;">
+                <legend>
+                    <h3>参数管理</h3>
+                </legend>
+                <div style="margin-bottom: 1em; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                    <input id="searchNamespace" type="text" is="emby-input" placeholder="命名空间" style="width: 200px;" />
+                    <input id="searchKey" type="text" is="emby-input" placeholder="键名" style="width: 200px;" />
+                    <button is="emby-button" id="searchBtn" type="button" class="raised button-submit emby-button"><span>查询</span></button>
+                    <button is="emby-button" id="clearSearchBtn" type="button" class="raised emby-button"><span>清空</span></button>
+                    <button is="emby-button" id="addParameterBtn" type="button" class="raised button-alt emby-button"><span>添加参数</span></button>
+                </div>
+                <div class="fieldDescription" style="margin-bottom: 1em;">共 <span id="parameterCount">0</span> 个参数</div>
+                <div id="parameterListContainer" style="width:100%;overflow-x:auto;">
+                    <table style="table-layout: fixed; width: 100%;">
+                        <thead>
+                            <tr>
+                                <th style="text-align: left; width: 20%;">命名空间</th>
+                                <th style="text-align: left; width: 20%;">键名</th>
+                                <th style="text-align: left; width: 35%;">值</th>
+                                <th style="text-align: left; width: 15%;">更新时间</th>
+                                <th style="text-align: center; width: 10%;">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="parameterList">
+                        </tbody>
+                    </table>
+                </div>
+            </fieldset>
+
+            <fieldset class="verticalSection verticalSection-extrabottompadding" style="margin-top: 2em;">
+                <legend>
+                    <h3>使用说明</h3>
+                </legend>
+                <div class="fieldDescription" style="line-height: 1.8;">
+                    <p>本插件提供参数持久化存储API，供其他插件或外部程序调用。</p>
+                    <p><strong>API接口：</strong></p>
+                    <ul style="margin-left: 20px;">
+                        <li>POST /emby/ParameterPersistence/Parameters/Query - 查询参数</li>
+                        <li>POST /emby/ParameterPersistence/Parameters/Create - 创建参数</li>
+                        <li>POST /emby/ParameterPersistence/Parameters/Update - 更新参数</li>
+                        <li>POST /emby/ParameterPersistence/Parameters/Delete - 删除参数</li>
+                    </ul>
+                    <p>详细API文档请查看 <a href="https://github.com/l429609201/Parameter_persistence" target="_blank">GitHub README</a></p>
+                </div>
+            </fieldset>
         </div>
     </div>
-</body>
-</html>
+</div>
