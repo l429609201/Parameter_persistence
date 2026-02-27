@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>参数持久化管理</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            border-bottom: 2px solid #52B54B;
+            padding-bottom: 10px;
+        }
+        .toolbar {
+            margin: 20px 0;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .search-box {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .btn-primary {
+            background-color: #52B54B;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #449938;
+        }
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+            color: #333;
+        }
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+        .actions {
+            display: flex;
+            gap: 8px;
+        }
+        .action-btn {
+            padding: 4px 8px;
+            font-size: 12px;
+            cursor: pointer;
+            border: none;
+            border-radius: 3px;
+        }
+        .edit-btn {
+            background-color: #007bff;
+            color: white;
+        }
+        .delete-btn {
+            background-color: #dc3545;
+            color: white;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 20px;
+            border-radius: 8px;
+            width: 500px;
+            max-width: 90%;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .form-group textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+        .info-box {
+            background-color: #e7f3ff;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .info-box h3 {
+            margin-top: 0;
+            color: #2196F3;
+        }
+        .stats {
+            display: flex;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .stat-card {
+            flex: 1;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #52B54B;
+        }
+        .stat-label {
+            color: #666;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📦 参数持久化管理</h1>
+        
+        <div class="info-box">
+            <h3>💡 使用说明</h3>
+            <p><strong>存储位置:</strong> <code>{EMBY配置目录}/config/plugins/configurations/ParameterPersistence/parameters.json</code></p>
+            <p><strong>API文档:</strong> 查看 <a href="https://github.com/l429609201/Parameter_persistence" target="_blank">GitHub README</a> 了解详细的API使用方法</p>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number" id="totalCount">0</div>
+                <div class="stat-label">总参数数</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="namespaceCount">0</div>
+                <div class="stat-label">命名空间数</div>
+            </div>
+        </div>
+
+        <div class="toolbar">
+            <input type="text" id="searchBox" class="search-box" placeholder="搜索参数（键名或命名空间）...">
+            <select id="namespaceFilter" class="search-box" style="flex: 0 0 200px;">
+                <option value="">所有命名空间</option>
+            </select>
+            <button class="btn btn-primary" onclick="showAddModal()">➕ 新增参数</button>
+            <button class="btn btn-primary" onclick="refreshData()">🔄 刷新</button>
+        </div>
+
+        <table id="parameterTable">
+            <thead>
+                <tr>
+                    <th>命名空间</th>
+                    <th>键名</th>
+                    <th>值</th>
+                    <th>类型</th>
+                    <th>描述</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <tr>
+                    <td colspan="6" style="text-align: center; color: #999;">加载中...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 添加/编辑模态框 -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <h2 id="modalTitle">新增参数</h2>
+            <form id="parameterForm">
+                <div class="form-group">
+                    <label>命名空间 *</label>
+                    <input type="text" id="namespace" required placeholder="例如: MyPlugin">
+                </div>
+                <div class="form-group">
+                    <label>键名 *</label>
+                    <input type="text" id="key" required placeholder="例如: ApiKey">
+                </div>
+                <div class="form-group">
+                    <label>值 *</label>
+                    <textarea id="value" required placeholder="参数值"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>类型</label>
+                    <select id="type">
+                        <option value="string">string</option>
+                        <option value="number">number</option>
+                        <option value="boolean">boolean</option>
+                        <option value="json">json</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>描述</label>
+                    <input type="text" id="description" placeholder="参数描述（可选）">
+                </div>
+                <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
+                    <button type="button" class="btn" onclick="closeModal()">取消</button>
+                    <button type="submit" class="btn btn-primary">保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let allParameters = [];
+        let editingParameter = null;
+
+        // 获取API Token
+        function getApiToken() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('api_key') || '';
+        }
+
+        // 加载参数列表
+        async function loadParameters() {
+            try {
+                const token = getApiToken();
+                const response = await fetch(`/emby/ParameterPersistence/Parameters?X-Emby-Token=${token}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    allParameters = data.dataList || [];
+                    updateStats();
+                    updateNamespaceFilter();
+                    renderTable(allParameters);
+                } else {
+                    alert('加载失败: ' + data.message);
+                }
+            } catch (error) {
+                console.error('加载参数失败:', error);
+                alert('加载参数失败: ' + error.message);
+            }
+        }
+
+        // 更新统计信息
+        function updateStats() {
+            document.getElementById('totalCount').textContent = allParameters.length;
+            const namespaces = new Set(allParameters.map(p => p.namespace));
+            document.getElementById('namespaceCount').textContent = namespaces.size;
+        }
+
+        // 更新命名空间筛选器
+        function updateNamespaceFilter() {
+            const namespaces = new Set(allParameters.map(p => p.namespace));
+            const select = document.getElementById('namespaceFilter');
+            const currentValue = select.value;
+            
+            select.innerHTML = '<option value="">所有命名空间</option>';
+            namespaces.forEach(ns => {
+                const option = document.createElement('option');
+                option.value = ns;
+                option.textContent = ns;
+                select.appendChild(option);
+            });
+            
+            select.value = currentValue;
+        }
+
+        // 渲染表格
+        function renderTable(parameters) {
+            const tbody = document.getElementById('tableBody');
+            
+            if (parameters.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #999;">暂无数据</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = parameters.map(param => `
+                <tr>
+                    <td>${escapeHtml(param.namespace)}</td>
+                    <td><strong>${escapeHtml(param.key)}</strong></td>
+                    <td style="max-width: 300px; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(param.value)}</td>
+                    <td><span style="background: #e7f3ff; padding: 2px 8px; border-radius: 3px;">${param.type}</span></td>
+                    <td>${escapeHtml(param.description || '')}</td>
+                    <td class="actions">
+                        <button class="action-btn edit-btn" onclick='editParameter(${JSON.stringify(param)})'>编辑</button>
+                        <button class="action-btn delete-btn" onclick='deleteParameter("${param.namespace}", "${param.key}")'>删除</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // HTML转义
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // 搜索和筛选
+        function filterParameters() {
+            const searchText = document.getElementById('searchBox').value.toLowerCase();
+            const namespace = document.getElementById('namespaceFilter').value;
+            
+            let filtered = allParameters;
+            
+            if (namespace) {
+                filtered = filtered.filter(p => p.namespace === namespace);
+            }
+            
+            if (searchText) {
+                filtered = filtered.filter(p => 
+                    p.key.toLowerCase().includes(searchText) ||
+                    p.namespace.toLowerCase().includes(searchText) ||
+                    (p.value && p.value.toLowerCase().includes(searchText))
+                );
+            }
+            
+            renderTable(filtered);
+        }
+
+        // 显示添加模态框
+        function showAddModal() {
+            editingParameter = null;
+            document.getElementById('modalTitle').textContent = '新增参数';
+            document.getElementById('parameterForm').reset();
+            document.getElementById('editModal').style.display = 'block';
+        }
+
+        // 编辑参数
+        function editParameter(param) {
+            editingParameter = param;
+            document.getElementById('modalTitle').textContent = '编辑参数';
+            document.getElementById('namespace').value = param.namespace;
+            document.getElementById('key').value = param.key;
+            document.getElementById('value').value = param.value;
+            document.getElementById('type').value = param.type;
+            document.getElementById('description').value = param.description || '';
+            document.getElementById('editModal').style.display = 'block';
+        }
+
+        // 关闭模态框
+        function closeModal() {
+            document.getElementById('editModal').style.display = 'none';
+        }
+
+        // 保存参数
+        document.getElementById('parameterForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const data = {
+                namespace: document.getElementById('namespace').value,
+                key: document.getElementById('key').value,
+                value: document.getElementById('value').value,
+                type: document.getElementById('type').value,
+                description: document.getElementById('description').value
+            };
+
+            try {
+                const token = getApiToken();
+                const endpoint = editingParameter ? 'Update' : 'Create';
+                const response = await fetch(`/emby/ParameterPersistence/Parameters/${endpoint}?X-Emby-Token=${token}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert(editingParameter ? '更新成功' : '创建成功');
+                    closeModal();
+                    loadParameters();
+                } else {
+                    alert('操作失败: ' + result.message);
+                }
+            } catch (error) {
+                alert('操作失败: ' + error.message);
+            }
+        });
+
+        // 删除参数
+        async function deleteParameter(namespace, key) {
+            if (!confirm(`确定要删除参数 "${namespace}/${key}" 吗？`)) {
+                return;
+            }
+
+            try {
+                const token = getApiToken();
+                const response = await fetch(`/emby/ParameterPersistence/Parameters/Delete?X-Emby-Token=${token}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ namespace, key })
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('删除成功');
+                    loadParameters();
+                } else {
+                    alert('删除失败: ' + result.message);
+                }
+            } catch (error) {
+                alert('删除失败: ' + error.message);
+            }
+        }
+
+        // 刷新数据
+        function refreshData() {
+            loadParameters();
+        }
+
+        // 事件监听
+        document.getElementById('searchBox').addEventListener('input', filterParameters);
+        document.getElementById('namespaceFilter').addEventListener('change', filterParameters);
+
+        // 点击模态框外部关闭
+        window.onclick = function(event) {
+            const modal = document.getElementById('editModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+
+        // 页面加载时初始化
+        loadParameters();
+    </script>
+</body>
+</html>
+
