@@ -33,11 +33,18 @@ namespace Emby.ParameterPersistence
             {
                 new PluginPageInfo
                 {
-                    Name = Name,
+                    Name = "parameterpersistence",
+                    DisplayName = "参数持久化",
                     EmbeddedResourcePath = GetType().Namespace + ".Configuration.configPage.html",
                     EnableInMainMenu = true,
                     MenuSection = "advanced",
-                    MenuIcon = "settings"
+                    MenuIcon = "settings",
+                    IsMainConfigPage = true
+                },
+                new PluginPageInfo
+                {
+                    Name = "parameterpersistencejs",
+                    EmbeddedResourcePath = GetType().Namespace + ".Configuration.configPage.js"
                 }
             };
         }

@@ -1,13 +1,12 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-
 <head>
     <meta charset="utf-8">
     <title>参数持久化</title>
 </head>
-
 <body>
     <div id="ParameterConfigPage" data-role="page" class="page type-interior pluginConfigurationPage"
+        data-controller="__plugin/parameterpersistencejs"
         data-require="emby-input,emby-button,emby-select,emby-checkbox">
         <div data-role="content">
             <div class="content-primary">
@@ -67,38 +66,6 @@
                 </form>
             </div>
         </div>
-        <script type="text/javascript">
-            var ParameterPersistenceConfig = {
-                pluginUniqueId: '8F6D8C9E-4B2A-4F3E-9D1C-7A8B9C0D1E2F'
-            };
-
-            document.querySelector('#ParameterConfigPage')
-                .addEventListener('pageshow', function () {
-                    Dashboard.showLoadingMsg();
-                    ApiClient.getPluginConfiguration(ParameterPersistenceConfig.pluginUniqueId).then(function (config) {
-                        document.querySelector('#EnableLogging').checked = config.EnableLogging;
-                        document.querySelector('#MaxParameterCount').value = config.MaxParameterCount;
-                        Dashboard.hideLoadingMsg();
-                    });
-                });
-
-            document.querySelector('#ParameterConfigForm')
-                .addEventListener('submit', function (e) {
-                    Dashboard.showLoadingMsg();
-                    ApiClient.getPluginConfiguration(ParameterPersistenceConfig.pluginUniqueId).then(function (config) {
-                        config.EnableLogging = document.querySelector('#EnableLogging').checked;
-                        config.MaxParameterCount = parseInt(document.querySelector('#MaxParameterCount').value) || 10000;
-
-                        ApiClient.updatePluginConfiguration(ParameterPersistenceConfig.pluginUniqueId, config).then(function (result) {
-                            Dashboard.processPluginConfigurationUpdateResult(result);
-                        });
-                    });
-
-                    e.preventDefault();
-                    return false;
-                });
-        </script>
     </div>
 </body>
-
 </html>
