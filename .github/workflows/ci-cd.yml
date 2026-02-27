@@ -160,79 +160,50 @@ jobs:
         NOTES="${{ steps.version_info.outputs.NOTES }}"
 
         # 读取更新日志
-        CHANGELOG=""
+        echo "## 🎉 ${NAME} v${VERSION}" > release_notes.md
+        echo "" >> release_notes.md
+        echo "### 📝 版本说明" >> release_notes.md
+        echo "" >> release_notes.md
+        echo "${DESCRIPTION}" >> release_notes.md
+        echo "" >> release_notes.md
+        echo "### ✨ 更新内容" >> release_notes.md
+        echo "" >> release_notes.md
+
         if [ -s changelog.txt ]; then
-          while IFS= read -r line; do
-            CHANGELOG="${CHANGELOG}- ${line}"$'\n'
-          done < changelog.txt
+          cat changelog.txt | while IFS= read -r line; do
+            echo "- ${line}" >> release_notes.md
+          done
         fi
 
-        # 读取破坏性变更
-        BREAKING=""
         if [ -s breaking.txt ] && [ "$(cat breaking.txt)" != "" ]; then
-          BREAKING=$'\n'"### ⚠️ 破坏性变更"$'\n\n'
-          while IFS= read -r line; do
-            BREAKING="${BREAKING}- ${line}"$'\n'
-          done < breaking.txt
+          echo "" >> release_notes.md
+          echo "### ⚠️ 破坏性变更" >> release_notes.md
+          echo "" >> release_notes.md
+          cat breaking.txt | while IFS= read -r line; do
+            echo "- ${line}" >> release_notes.md
+          done
         fi
 
-        # 生成Release说明
-        cat > release_notes.md << EOF
-        ## 🎉 ${NAME} v${VERSION}
-
-        ### 📝 版本说明
-
-        ${DESCRIPTION}
-
-        ### ✨ 更新内容
-
-        ${CHANGELOG}${BREAKING}
-
-        ### 📦 安装方法
-
-        **方式1: 下载DLL文件**
-        1. 下载 \`${{ env.PROJECT_NAME }}.dll\` 文件
-        2. 将DLL文件放入EMBY插件目录：\`{EMBY安装目录}/plugins/\`
-        3. 重启EMBY服务器
-        4. 在EMBY管理后台的"插件"页面中确认插件已加载
-
-        **方式2: 下载ZIP压缩包**
-        1. 下载 \`${{ env.PROJECT_NAME }}-${VERSION}.zip\`
-        2. 解压后将DLL文件放入EMBY插件目录
-        3. 重启EMBY服务器
-
-        ### 💾 存储位置
-
-        参数数据存储在：
-        \`\`\`
-        {EMBY配置目录}/config/plugins/configurations/ParameterPersistence/parameters.json
-        \`\`\`
-
-        ### 🔧 API接口
-
-        本插件提供5个统一设计的API接口：
-
-        | 接口 | 路径 | 方法 | 功能 |
-        |------|------|------|------|
-        | Query | \`/Parameters/Query\` | POST | 查询参数（单个/批量/命名空间） |
-        | Create | \`/Parameters/Create\` | POST | 创建参数（单个/批量） |
-        | Update | \`/Parameters/Update\` | POST | 更新参数（单个/批量） |
-        | Delete | \`/Parameters/Delete\` | POST | 删除参数（单个/批量） |
-        | List | \`/Parameters\` | GET | 列出所有参数 |
-
-        ### 📚 文档
-
-        - [README.md](https://github.com/${{ github.repository }}/blob/main/README.md) - 快速开始和API使用说明
-        - [设计方案.md](https://github.com/${{ github.repository }}/blob/main/设计方案.md) - 详细的技术设计文档
-
-        ### 📋 备注
-
-        ${NOTES}
-
-        ---
-
-        **注意**: 本插件需要EMBY服务器版本 4.8.0 或更高版本
-        EOF
+        echo "" >> release_notes.md
+        echo "### 📦 安装方法" >> release_notes.md
+        echo "" >> release_notes.md
+        echo "**方式1: 下载DLL文件**" >> release_notes.md
+        echo "1. 下载 \`${{ env.PROJECT_NAME }}.dll\` 文件" >> release_notes.md
+        echo "2. 将DLL文件放入EMBY插件目录" >> release_notes.md
+        echo "3. 重启EMBY服务器" >> release_notes.md
+        echo "" >> release_notes.md
+        echo "**方式2: 下载ZIP压缩包**" >> release_notes.md
+        echo "1. 下载 \`${{ env.PROJECT_NAME }}-${VERSION}.zip\`" >> release_notes.md
+        echo "2. 解压后将DLL文件放入EMBY插件目录" >> release_notes.md
+        echo "" >> release_notes.md
+        echo "### 📚 文档" >> release_notes.md
+        echo "" >> release_notes.md
+        echo "- [README.md](https://github.com/${{ github.repository }}/blob/main/README.md)" >> release_notes.md
+        echo "- [设计方案.md](https://github.com/${{ github.repository }}/blob/main/设计方案.md)" >> release_notes.md
+        echo "" >> release_notes.md
+        echo "### 📋 备注" >> release_notes.md
+        echo "" >> release_notes.md
+        echo "${NOTES}" >> release_notes.md
 
         echo "✅ Release说明已生成"
 
