@@ -163,7 +163,7 @@ namespace Emby.ParameterPersistence.Api
         {
             try
             {
-                ValidateAuthentication(RequestContext.Request);
+                ValidateAuthentication(Request);
 
                 List<ParameterModel> parameters;
 
@@ -218,7 +218,7 @@ namespace Emby.ParameterPersistence.Api
         {
             try
             {
-                ValidateAuthentication(RequestContext.Request);
+                ValidateAuthentication(Request);
 
                 // 单个查询
                 if (!string.IsNullOrEmpty(request.Key))
@@ -312,7 +312,7 @@ namespace Emby.ParameterPersistence.Api
         {
             try
             {
-                ValidateAuthentication(RequestContext.Request);
+                ValidateAuthentication(Request);
 
                 // 批量创建
                 if (request.Parameters != null && request.Parameters.Count > 0)
@@ -425,7 +425,7 @@ namespace Emby.ParameterPersistence.Api
         {
             try
             {
-                ValidateAuthentication(RequestContext.Request);
+                ValidateAuthentication(Request);
 
                 // 批量更新
                 if (request.Parameters != null && request.Parameters.Count > 0)
@@ -529,7 +529,7 @@ namespace Emby.ParameterPersistence.Api
         {
             try
             {
-                ValidateAuthentication(RequestContext.Request);
+                ValidateAuthentication(Request);
 
                 // 批量删除（完整参数列表）
                 if (request.Parameters != null && request.Parameters.Count > 0)
