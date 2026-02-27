@@ -1,13 +1,15 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Emby.ParameterPersistence.Models;
 using MediaBrowser.Common.Configuration;
 using MediaBrowser.Model.Logging;
-using Newtonsoft.Json;
+using MediaBrowser.Model.Serialization;
 
 namespace Emby.ParameterPersistence.Services
 {
@@ -21,16 +23,18 @@ namespace Emby.ParameterPersistence.Services
         private readonly SemaphoreSlim _fileLock = new SemaphoreSlim(1, 1);
         private readonly string _dataFilePath;
         private readonly string _dataDirectory;
+        private readonly IJsonSerializer _jsonSerializer;
 
-        public ParameterStorageService(IApplicationPaths appPaths, ILogManager logManager)
+        public ParameterStorageService(IApplicationPaths appPaths, ILogManager logManager, IJsonSerializer jsonSerializer)
         {
             _appPaths = appPaths;
             _logger = logManager.GetLogger("ParameterPersistence");
-            
+            _jsonSerializer = jsonSerializer;
+
             // 获取配置路径
             _dataDirectory = Path.Combine(_appPaths.PluginConfigurationsPath, "ParameterPersistence");
             _dataFilePath = Path.Combine(_dataDirectory, "parameters.json");
-            
+
             // 确保目录存在
             EnsureDirectoryExists();
         }
@@ -66,7 +70,7 @@ namespace Emby.ParameterPersistence.Services
                 }
 
                 var json = await Task.Run(() => File.ReadAllText(_dataFilePath));
-                var data = JsonConvert.DeserializeObject<ParameterDataStore>(json);
+                var data = _jsonSerializer.DeserializeFromString<ParameterDataStore>(json);
                 return data ?? new ParameterDataStore();
             }
             catch (Exception ex)
@@ -88,7 +92,7 @@ namespace Emby.ParameterPersistence.Services
             await _fileLock.WaitAsync();
             try
             {
-                var json = JsonConvert.SerializeObject(data, Formatting.Indented);
+                var json = _jsonSerializer.SerializeToString(data);
                 await Task.Run(() => File.WriteAllText(_dataFilePath, json));
                 _logger.Info($"参数数据已保存，共 {data.Parameters.Count} 个参数");
             }

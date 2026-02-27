@@ -8,6 +8,7 @@ using Emby.ParameterPersistence.Services;
 using MediaBrowser.Common.Configuration;
 using MediaBrowser.Controller.Net;
 using MediaBrowser.Model.Logging;
+using MediaBrowser.Model.Serialization;
 using MediaBrowser.Model.Services;
 
 namespace Emby.ParameterPersistence.Api
@@ -132,7 +133,8 @@ namespace Emby.ParameterPersistence.Api
         public ParameterController(
             ILogManager logManager,
             IApplicationPaths appPaths,
-            IAuthorizationContext authContext)
+            IAuthorizationContext authContext,
+            IJsonSerializer jsonSerializer)
         {
             _logger = logManager.GetLogger("ParameterPersistence");
             _authContext = authContext;
@@ -143,7 +145,7 @@ namespace Emby.ParameterPersistence.Api
                 {
                     if (_storageService == null)
                     {
-                        _storageService = new ParameterStorageService(appPaths, logManager);
+                        _storageService = new ParameterStorageService(appPaths, logManager, jsonSerializer);
                     }
                 }
             }
