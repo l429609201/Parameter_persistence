@@ -38,19 +38,29 @@ define(['loading', 'emby-input', 'emby-button', 'emby-checkbox', 'dialogHelper',
     function queryParameters(namespace, key) {
         loading.show();
 
-        var requestData = {};
-        if (namespace) requestData.Namespace = namespace;
-        if (key) requestData.Key = key;
-
+        // 始终查询全部数据，在前端做模糊过滤
         ApiClient.ajax({
             type: 'GET',
-            url: ApiClient.getUrl('/ParameterPersistence/Query', requestData),
+            url: ApiClient.getUrl('/ParameterPersistence/Query'),
             dataType: 'json'
         }).then(function (response) {
             if (typeof response === 'string') {
                 response = JSON.parse(response);
             }
-            parameters = response.DataList || response.Parameters || [];
+            var allParams = response.DataList || response.Parameters || (response.Data ? [response.Data] : []);
+
+            // 前端模糊过滤
+            if (namespace || key) {
+                var nsFilter = (namespace || '').toLowerCase();
+                var keyFilter = (key || '').toLowerCase();
+                allParams = allParams.filter(function (p) {
+                    var nsMatch = !nsFilter || (p.Namespace && p.Namespace.toLowerCase().indexOf(nsFilter) !== -1);
+                    var keyMatch = !keyFilter || (p.Key && p.Key.toLowerCase().indexOf(keyFilter) !== -1);
+                    return nsMatch && keyMatch;
+                });
+            }
+
+            parameters = allParams;
             renderParameterList();
             loading.hide();
         }).catch(function (error) {
