@@ -328,7 +328,7 @@ define(['loading', 'emby-input', 'emby-button', 'emby-checkbox', 'dialogHelper',
                     url: ApiClient.getUrl('/ParameterPersistence/Query'),
                     dataType: 'json'
                 }).then(function (result) {
-                    var params = result.Data || result || [];
+                    var params = result.DataList || result.Parameters || (result.Data ? [result.Data] : []);
                     if (params.length === 0) {
                         loading.hide();
                         require(['toast'], function (toast) {
@@ -425,11 +425,14 @@ define(['loading', 'emby-input', 'emby-button', 'emby-checkbox', 'dialogHelper',
 
                 // 获取插件信息并显示版本号
                 ApiClient.getInstalledPlugins().then(function (plugins) {
-                    var plugin = plugins.find(function (p) { return p.Id === pluginId; });
+                    var pluginIdLower = pluginId.toLowerCase();
+                    var plugin = plugins.find(function (p) { return p.Id && p.Id.toLowerCase() === pluginIdLower; });
                     if (plugin) {
                         view.querySelector('#pluginVersion').textContent = 'v' + plugin.Version;
                         var aboutVer = view.querySelector('#aboutVersion') || document.getElementById('aboutVersion');
                         if (aboutVer) aboutVer.textContent = plugin.Version;
+                    } else {
+                        console.warn('[ParameterPersistence] 未找到插件，可用插件ID列表:', plugins.map(function(p){ return p.Id; }));
                     }
                 });
 
