@@ -1,0 +1,17 @@
+{
+  "version": "1.0.0",
+  "name": "EMBY 参数持久化插件",
+  "description": "首次正式发布",
+  "changelog": [
+    "✨ 实现5个统一设计的API接口（Query、Create、Update、Delete、List）",
+    "🔄 支持自动识别单个和批量操作",
+    "🏷️ 支持命名空间分类管理",
+    "🔐 添加Token安全验证，仅管理员可访问",
+    "💾 参数持久化到本地JSON文件",
+    "🎨 提供Web可视化管理界面",
+    "📦 支持导入导出功能"
+  ],
+  "breaking_changes": [],
+  "notes": "本版本为API改造后的首次发布，接口数量从10个精简为5个，采用统一的设计模式。"
+}
+

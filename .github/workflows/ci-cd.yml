@@ -1,0 +1,297 @@
+name: Auto Release from Version File
+
+on:
+  push:
+    branches: [ main, master ]
+    paths:
+      - 'version.json'
+      - '**.cs'
+      - '**.csproj'
+  workflow_dispatch:
+
+env:
+  PROJECT_NAME: Emby.ParameterPersistence
+  DOTNET_VERSION: '6.0.x'
+
+jobs:
+  check-version:
+    name: 检查版本并创建标签
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.read_version.outputs.version }}
+      should_release: ${{ steps.check_tag.outputs.should_release }}
+
+    steps:
+    - name: 检出代码
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: 读取版本信息
+      id: read_version
+      run: |
+        VERSION=$(jq -r '.version' version.json)
+        NAME=$(jq -r '.name' version.json)
+        DESCRIPTION=$(jq -r '.description' version.json)
+
+        echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+        echo "NAME=$NAME" >> $GITHUB_OUTPUT
+        echo "DESCRIPTION=$DESCRIPTION" >> $GITHUB_OUTPUT
+
+        echo "📦 版本号: $VERSION"
+        echo "📝 名称: $NAME"
+        echo "📄 描述: $DESCRIPTION"
+
+    - name: 检查标签是否存在
+      id: check_tag
+      run: |
+        VERSION="${{ steps.read_version.outputs.VERSION }}"
+        TAG="v$VERSION"
+
+        if git rev-parse "$TAG" >/dev/null 2>&1; then
+          echo "⚠️ 标签 $TAG 已存在，跳过发布"
+          echo "should_release=false" >> $GITHUB_OUTPUT
+        else
+          echo "✅ 标签 $TAG 不存在，将创建新发布"
+          echo "should_release=true" >> $GITHUB_OUTPUT
+        fi
+
+    - name: 创建标签
+      if: steps.check_tag.outputs.should_release == 'true'
+      run: |
+        VERSION="${{ steps.read_version.outputs.VERSION }}"
+        DESCRIPTION="${{ steps.read_version.outputs.DESCRIPTION }}"
+        TAG="v$VERSION"
+
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+
+        git tag -a "$TAG" -m "$DESCRIPTION"
+        git push origin "$TAG"
+
+        echo "✅ 已创建并推送标签: $TAG"
+
+  build-and-release:
+    name: 编译并发布
+    needs: check-version
+    if: needs.check-version.outputs.should_release == 'true'
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: 检出代码
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: 设置.NET SDK
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+
+    - name: 读取版本信息
+      id: version_info
+      run: |
+        VERSION=$(jq -r '.version' version.json)
+        NAME=$(jq -r '.name' version.json)
+        DESCRIPTION=$(jq -r '.description' version.json)
+        NOTES=$(jq -r '.notes' version.json)
+
+        # 读取更新日志
+        CHANGELOG=$(jq -r '.changelog | join("\n")' version.json)
+
+        # 读取破坏性变更
+        BREAKING=$(jq -r '.breaking_changes | join("\n")' version.json)
+
+        echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+        echo "NAME=$NAME" >> $GITHUB_OUTPUT
+        echo "DESCRIPTION=$DESCRIPTION" >> $GITHUB_OUTPUT
+        echo "NOTES=$NOTES" >> $GITHUB_OUTPUT
+
+        # 保存到文件以便后续使用
+        echo "$CHANGELOG" > changelog.txt
+        echo "$BREAKING" > breaking.txt
+
+    - name: 还原依赖包
+      run: dotnet restore ${{ env.PROJECT_NAME }}.csproj
+
+    - name: 编译Release版本
+      run: dotnet build ${{ env.PROJECT_NAME }}.csproj --configuration Release --no-restore
+
+    - name: 准备发布文件
+      run: |
+        mkdir -p release
+        cp bin/Release/netstandard2.0/${{ env.PROJECT_NAME }}.dll release/
+        cp bin/Release/netstandard2.0/${{ env.PROJECT_NAME }}.xml release/ || true
+        cp README.md release/
+        cp 设计方案.md release/
+        cp version.json release/
+
+        # 创建版本信息文件
+        cat > release/VERSION.txt << EOF
+        插件名称: ${{ steps.version_info.outputs.NAME }}
+        版本号: ${{ steps.version_info.outputs.VERSION }}
+        编译时间: $(date +'%Y-%m-%d %H:%M:%S')
+        提交哈希: $(git rev-parse --short HEAD)
+        编译环境: Ubuntu Latest + .NET ${{ env.DOTNET_VERSION }}
+
+        版本说明:
+        ${{ steps.version_info.outputs.DESCRIPTION }}
+
+        备注:
+        ${{ steps.version_info.outputs.NOTES }}
+        EOF
+
+        echo "📁 发布文件列表:"
+        ls -lh release/
+
+    - name: 创建ZIP压缩包
+      run: |
+        cd release
+        zip -r ../${{ env.PROJECT_NAME }}-${{ steps.version_info.outputs.VERSION }}.zip .
+        cd ..
+        echo "📦 压缩包大小:"
+        ls -lh ${{ env.PROJECT_NAME }}-${{ steps.version_info.outputs.VERSION }}.zip
+
+    - name: 上传编译产物
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ env.PROJECT_NAME }}-${{ steps.version_info.outputs.VERSION }}
+        path: release/
+        retention-days: 90
+
+    - name: 上传ZIP压缩包
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ env.PROJECT_NAME }}-${{ steps.version_info.outputs.VERSION }}-zip
+        path: ${{ env.PROJECT_NAME }}-${{ steps.version_info.outputs.VERSION }}.zip
+        retention-days: 90
+
+    - name: 生成Release说明
+      id: release_notes
+      run: |
+        VERSION="${{ steps.version_info.outputs.VERSION }}"
+        NAME="${{ steps.version_info.outputs.NAME }}"
+        DESCRIPTION="${{ steps.version_info.outputs.DESCRIPTION }}"
+        NOTES="${{ steps.version_info.outputs.NOTES }}"
+
+        # 读取更新日志
+        CHANGELOG=""
+        if [ -s changelog.txt ]; then
+          while IFS= read -r line; do
+            CHANGELOG="${CHANGELOG}- ${line}\n"
+          done < changelog.txt
+        fi
+
+        # 读取破坏性变更
+        BREAKING=""
+        if [ -s breaking.txt ] && [ "$(cat breaking.txt)" != "" ]; then
+          BREAKING="\n### ⚠️ 破坏性变更\n\n"
+          while IFS= read -r line; do
+            BREAKING="${BREAKING}- ${line}\n"
+          done < breaking.txt
+        fi
+
+        # 生成完整的Release说明
+        cat > release_notes.md << 'EOF'
+## 🎉 $NAME v$VERSION
+
+### 📝 版本说明
+
+$DESCRIPTION
+
+### ✨ 更新内容
+
+$CHANGELOG$BREAKING
+
+### 📦 安装方法
+
+**方式1: 下载DLL文件**
+1. 下载 `$PROJECT_NAME.dll` 文件
+2. 将DLL文件放入EMBY插件目录：`{EMBY安装目录}/plugins/`
+3. 重启EMBY服务器
+4. 在EMBY管理后台的"插件"页面中确认插件已加载
+
+**方式2: 下载ZIP压缩包**
+1. 下载 `$PROJECT_NAME-$VERSION.zip`
+2. 解压后将DLL文件放入EMBY插件目录
+3. 重启EMBY服务器
+
+### 💾 存储位置
+
+参数数据存储在：
+```
+{EMBY配置目录}/config/plugins/configurations/ParameterPersistence/parameters.json
+```
+
+### 🔧 API接口
+
+本插件提供5个统一设计的API接口：
+
+| 接口 | 路径 | 方法 | 功能 |
+|------|------|------|------|
+| Query | `/Parameters/Query` | POST | 查询参数（单个/批量/命名空间） |
+| Create | `/Parameters/Create` | POST | 创建参数（单个/批量） |
+| Update | `/Parameters/Update` | POST | 更新参数（单个/批量） |
+| Delete | `/Parameters/Delete` | POST | 删除参数（单个/批量） |
+| List | `/Parameters` | GET | 列出所有参数 |
+
+### 📚 文档
+
+- [README.md](https://github.com/$GITHUB_REPOSITORY/blob/main/README.md) - 快速开始和API使用说明
+- [设计方案.md](https://github.com/$GITHUB_REPOSITORY/blob/main/设计方案.md) - 详细的技术设计文档
+
+### 📋 备注
+
+$NOTES
+
+---
+
+**注意**: 本插件需要EMBY服务器版本 4.8.0 或更高版本
+EOF
+
+        # 替换变量
+        sed -i "s|\$NAME|$NAME|g" release_notes.md
+        sed -i "s|\$VERSION|$VERSION|g" release_notes.md
+        sed -i "s|\$DESCRIPTION|$DESCRIPTION|g" release_notes.md
+        sed -i "s|\$CHANGELOG|$CHANGELOG|g" release_notes.md
+        sed -i "s|\$BREAKING|$BREAKING|g" release_notes.md
+        sed -i "s|\$PROJECT_NAME|${{ env.PROJECT_NAME }}|g" release_notes.md
+        sed -i "s|\$NOTES|$NOTES|g" release_notes.md
+        sed -i "s|\$GITHUB_REPOSITORY|${{ github.repository }}|g" release_notes.md
+
+        echo "✅ Release说明已生成"
+        cat release_notes.md
+
+    - name: 创建GitHub Release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: v${{ steps.version_info.outputs.VERSION }}
+        name: ${{ steps.version_info.outputs.NAME }} v${{ steps.version_info.outputs.VERSION }}
+        body_path: release_notes.md
+        files: |
+          release/${{ env.PROJECT_NAME }}.dll
+          release/README.md
+          release/设计方案.md
+          release/VERSION.txt
+          release/version.json
+          ${{ env.PROJECT_NAME }}-${{ steps.version_info.outputs.VERSION }}.zip
+        draft: false
+        prerelease: false
+        generate_release_notes: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: 发布成功通知
+      if: success()
+      run: |
+        echo "✅ 发布成功！"
+        echo "📦 版本: ${{ steps.version_info.outputs.VERSION }}"
+        echo "🎯 Release已创建: https://github.com/${{ github.repository }}/releases/tag/v${{ steps.version_info.outputs.VERSION }}"
+
+    - name: 发布失败通知
+      if: failure()
+      run: |
+        echo "❌ 发布失败！"
+        echo "请检查构建日志"
+
+
