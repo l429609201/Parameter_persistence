@@ -1,0 +1,13 @@
+D:\桌面\Parameter_persistence\obj\Release\netstandard2.0\Emby.ParameterPersistence.csproj.AssemblyReference.cache
+D:\桌面\Parameter_persistence\obj\Release\netstandard2.0\Emby.ParameterPersistence.GeneratedMSBuildEditorConfig.editorconfig
+D:\桌面\Parameter_persistence\obj\Release\netstandard2.0\Emby.ParameterPersistence.AssemblyInfoInputs.cache
+D:\桌面\Parameter_persistence\obj\Release\netstandard2.0\Emby.ParameterPersistence.AssemblyInfo.cs
+D:\桌面\Parameter_persistence\obj\Release\netstandard2.0\Emby.ParameterPersistence.csproj.CoreCompileInputs.cache
+D:\桌面\Parameter_persistence\obj\Release\netstandard2.0\Emby.ParameterPersistence.sourcelink.json
+D:\桌面\Parameter_persistence\bin\Release\netstandard2.0\Emby.ParameterPersistence.deps.json
+D:\桌面\Parameter_persistence\bin\Release\netstandard2.0\Emby.ParameterPersistence.dll
+D:\桌面\Parameter_persistence\bin\Release\netstandard2.0\Emby.ParameterPersistence.pdb
+D:\桌面\Parameter_persistence\bin\Release\netstandard2.0\Emby.ParameterPersistence.xml
+D:\桌面\Parameter_persistence\obj\Release\netstandard2.0\Emby.ParameterPersistence.dll
+D:\桌面\Parameter_persistence\obj\Release\netstandard2.0\Emby.ParameterPersistence.xml
+D:\桌面\Parameter_persistence\obj\Release\netstandard2.0\Emby.ParameterPersistence.pdb

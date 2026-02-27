@@ -1,0 +1,248 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Emby.ParameterPersistence</name>
+    </assembly>
+    <members>
+        <member name="T:Emby.ParameterPersistence.Api.ParameterRequest">
+            <summary>
+            获取参数列表请求
+            </summary>
+        </member>
+        <member name="T:Emby.ParameterPersistence.Api.QueryParameterRequest">
+            <summary>
+            查询参数接口（统一单个和批量）
+            </summary>
+        </member>
+        <member name="T:Emby.ParameterPersistence.Api.CreateParameterRequest">
+            <summary>
+            创建参数接口（统一单个和批量）
+            </summary>
+        </member>
+        <member name="T:Emby.ParameterPersistence.Api.UpdateParameterRequest">
+            <summary>
+            更新参数接口（统一单个和批量）
+            </summary>
+        </member>
+        <member name="T:Emby.ParameterPersistence.Api.DeleteParameterRequest">
+            <summary>
+            删除参数接口（统一单个和批量）
+            </summary>
+        </member>
+        <member name="T:Emby.ParameterPersistence.Api.ParameterItem">
+            <summary>
+            参数项（用于批量操作）
+            </summary>
+        </member>
+        <member name="T:Emby.ParameterPersistence.Api.ParameterController">
+            <summary>
+            参数持久化API服务
+            </summary>
+        </member>
+        <member name="M:Emby.ParameterPersistence.Api.ParameterController.ValidateAuthentication(MediaBrowser.Model.Services.IRequest)">
+            <summary>
+            验证Token和管理员权限
+            </summary>
+        </member>
+        <member name="M:Emby.ParameterPersistence.Api.ParameterController.Get(Emby.ParameterPersistence.Api.ParameterRequest)">
+            <summary>
+            GET /ParameterPersistence/Parameters
+            获取参数列表或搜索参数
+            </summary>
+        </member>
+        <member name="M:Emby.ParameterPersistence.Api.ParameterController.Post(Emby.ParameterPersistence.Api.QueryParameterRequest)">
+            <summary>
+            POST /ParameterPersistence/Parameters/Query
+            查询参数（统一单个和批量）
+            </summary>
+        </member>
+        <member name="M:Emby.ParameterPersistence.Api.ParameterController.Post(Emby.ParameterPersistence.Api.CreateParameterRequest)">
+            <summary>
+            POST /ParameterPersistence/Parameters/Create
+            创建参数（统一单个和批量）
+            </summary>
+        </member>
+        <member name="M:Emby.ParameterPersistence.Api.ParameterController.Post(Emby.ParameterPersistence.Api.UpdateParameterRequest)">
+            <summary>
+            POST /ParameterPersistence/Parameters/Update
+            更新参数（统一单个和批量）
+            </summary>
+        </member>
+        <member name="M:Emby.ParameterPersistence.Api.ParameterController.Post(Emby.ParameterPersistence.Api.DeleteParameterRequest)">
+            <summary>
+            POST /ParameterPersistence/Parameters/Delete
+            删除参数（统一单个和批量）
+            </summary>
+        </member>
+        <member name="T:Emby.ParameterPersistence.Configuration.PluginConfiguration">
+            <summary>
+            插件配置类
+            </summary>
+        </member>
+        <member name="P:Emby.ParameterPersistence.Configuration.PluginConfiguration.EnableLogging">
+            <summary>
+            是否启用日志记录
+            </summary>
+        </member>
+        <member name="P:Emby.ParameterPersistence.Configuration.PluginConfiguration.MaxParameterCount">
+            <summary>
+            最大参数数量限制
+            </summary>
+        </member>
+        <member name="T:Emby.ParameterPersistence.Models.ParameterModel">
+            <summary>
+            参数模型
+            </summary>
+        </member>
+        <member name="P:Emby.ParameterPersistence.Models.ParameterModel.Id">
+            <summary>
+            参数唯一标识
+            </summary>
+        </member>
+        <member name="P:Emby.ParameterPersistence.Models.ParameterModel.Namespace">
+            <summary>
+            命名空间（用于分类管理）
+            </summary>
+        </member>
+        <member name="P:Emby.ParameterPersistence.Models.ParameterModel.Key">
+            <summary>
+            参数键名
+            </summary>
+        </member>
+        <member name="P:Emby.ParameterPersistence.Models.ParameterModel.Value">
+            <summary>
+            参数值
+            </summary>
+        </member>
+        <member name="P:Emby.ParameterPersistence.Models.ParameterModel.Type">
+            <summary>
+            参数类型（string, number, boolean, json）
+            </summary>
+        </member>
+        <member name="P:Emby.ParameterPersistence.Models.ParameterModel.Description">
+            <summary>
+            参数描述
+            </summary>
+        </member>
+        <member name="P:Emby.ParameterPersistence.Models.ParameterModel.CreatedAt">
+            <summary>
+            创建时间
+            </summary>
+        </member>
+        <member name="P:Emby.ParameterPersistence.Models.ParameterModel.UpdatedAt">
+            <summary>
+            更新时间
+            </summary>
+        </member>
+        <member name="T:Emby.ParameterPersistence.Models.ParameterResponse">
+            <summary>
+            API响应模型
+            </summary>
+        </member>
+        <member name="P:Emby.ParameterPersistence.Models.ParameterResponse.Success">
+            <summary>
+            是否成功
+            </summary>
+        </member>
+        <member name="P:Emby.ParameterPersistence.Models.ParameterResponse.Message">
+            <summary>
+            响应消息
+            </summary>
+        </member>
+        <member name="P:Emby.ParameterPersistence.Models.ParameterResponse.Data">
+            <summary>
+            单个数据
+            </summary>
+        </member>
+        <member name="P:Emby.ParameterPersistence.Models.ParameterResponse.DataList">
+            <summary>
+            数据列表
+            </summary>
+        </member>
+        <member name="P:Emby.ParameterPersistence.Models.ParameterResponse.Total">
+            <summary>
+            总数
+            </summary>
+        </member>
+        <member name="T:Emby.ParameterPersistence.Models.BatchOperationRequest">
+            <summary>
+            批量操作请求模型
+            </summary>
+        </member>
+        <member name="T:Emby.ParameterPersistence.Models.OperationItem">
+            <summary>
+            操作项
+            </summary>
+        </member>
+        <member name="T:Emby.ParameterPersistence.Plugin">
+            <summary>
+            参数持久化插件主类
+            </summary>
+        </member>
+        <member name="T:Emby.ParameterPersistence.Services.IParameterStorageService">
+            <summary>
+            参数存储服务接口
+            </summary>
+        </member>
+        <member name="M:Emby.ParameterPersistence.Services.IParameterStorageService.GetAllParametersAsync">
+            <summary>
+            获取所有参数
+            </summary>
+        </member>
+        <member name="M:Emby.ParameterPersistence.Services.IParameterStorageService.GetParameterAsync(System.String,System.String)">
+            <summary>
+            根据命名空间和键名获取参数
+            </summary>
+        </member>
+        <member name="M:Emby.ParameterPersistence.Services.IParameterStorageService.GetParametersByNamespaceAsync(System.String)">
+            <summary>
+            根据命名空间获取参数列表
+            </summary>
+        </member>
+        <member name="M:Emby.ParameterPersistence.Services.IParameterStorageService.CreateParameterAsync(Emby.ParameterPersistence.Models.ParameterModel)">
+            <summary>
+            创建参数
+            </summary>
+        </member>
+        <member name="M:Emby.ParameterPersistence.Services.IParameterStorageService.UpdateParameterAsync(System.String,System.String,System.String,System.String)">
+            <summary>
+            更新参数
+            </summary>
+        </member>
+        <member name="M:Emby.ParameterPersistence.Services.IParameterStorageService.DeleteParameterAsync(System.String,System.String)">
+            <summary>
+            删除参数
+            </summary>
+        </member>
+        <member name="M:Emby.ParameterPersistence.Services.IParameterStorageService.BatchOperationAsync(System.Collections.Generic.List{Emby.ParameterPersistence.Models.OperationItem})">
+            <summary>
+            批量操作
+            </summary>
+        </member>
+        <member name="M:Emby.ParameterPersistence.Services.IParameterStorageService.SearchParametersAsync(System.String)">
+            <summary>
+            搜索参数
+            </summary>
+        </member>
+        <member name="T:Emby.ParameterPersistence.Services.ParameterStorageService">
+            <summary>
+            参数存储服务实现
+            </summary>
+        </member>
+        <member name="M:Emby.ParameterPersistence.Services.ParameterStorageService.ReadDataAsync">
+            <summary>
+            读取参数数据
+            </summary>
+        </member>
+        <member name="M:Emby.ParameterPersistence.Services.ParameterStorageService.WriteDataAsync(Emby.ParameterPersistence.Services.ParameterDataStore)">
+            <summary>
+            写入参数数据
+            </summary>
+        </member>
+        <member name="T:Emby.ParameterPersistence.Services.ParameterDataStore">
+            <summary>
+            参数数据存储结构
+            </summary>
+        </member>
+    </members>
+</doc>
