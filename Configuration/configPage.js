@@ -61,80 +61,108 @@ define(['loading', 'emby-input', 'emby-button', 'emby-checkbox', 'dialogHelper',
     }
 
     function renderParameterList() {
-        var container = currentPage.querySelector('#parameterList');
-        container.innerHTML = '';
+        var tbody = currentPage.querySelector('#parameterList');
+
+        // 清空现有内容
+        while (tbody.firstChild) {
+            tbody.removeChild(tbody.firstChild);
+        }
+
         currentPage.querySelector('#parameterCount').textContent = parameters.length;
 
         if (parameters.length === 0) {
-            container.innerHTML = '<div class="fieldDescription" style="padding: 2em; text-align: center; color: #999;">暂无参数数据，点击"添加参数"按钮创建新参数</div>';
+            var tr = document.createElement("tr");
+            var td = document.createElement("td");
+            td.appendChild(document.createTextNode("暂无参数数据，点击添加参数按钮创建新参数"));
+            td.colSpan = "5";
+            td.style.textAlign = "center";
+            td.style.padding = "2em";
+            td.style.color = "#999";
+            tr.appendChild(td);
+            tbody.appendChild(tr);
             return;
         }
 
-        var html = '';
         parameters.forEach(function (param) {
+            var tr = document.createElement("tr");
+            var td = null;
+
+            // 命名空间
+            td = document.createElement("td");
+            td.appendChild(document.createTextNode(param.Namespace));
+            td.style.wordBreak = "break-all";
+            tr.appendChild(td);
+
+            // 键名
+            td = document.createElement("td");
+            td.appendChild(document.createTextNode(param.Key));
+            td.style.wordBreak = "break-all";
+            tr.appendChild(td);
+
+            // 值（截断显示）
+            td = document.createElement("td");
             var valueText = param.Value || '';
-            if (valueText.length > 150) {
-                valueText = valueText.substring(0, 150) + '...';
+            if (valueText.length > 100) {
+                valueText = valueText.substring(0, 100) + '...';
             }
+            td.appendChild(document.createTextNode(valueText));
+            td.style.fontFamily = "monospace";
+            td.style.fontSize = "0.9em";
+            td.style.wordBreak = "break-all";
+            tr.appendChild(td);
 
+            // 更新时间
+            td = document.createElement("td");
             var timeText = '';
-            if (param.CreatedAt) {
-                timeText = '创建: ' + new Date(param.CreatedAt).toLocaleString('zh-CN');
-            }
             if (param.UpdatedAt) {
-                timeText += (timeText ? ' | ' : '') + '更新: ' + new Date(param.UpdatedAt).toLocaleString('zh-CN');
-            }
-
-            html += '<div class="listItem listItem-border" style="padding: 1em; margin-bottom: 0.5em;">';
-            html += '<div style="display: flex; justify-content: space-between; align-items: start;">';
-            html += '<div style="flex: 1;">';
-            html += '<div style="font-weight: bold; color: #00a4dc; margin-bottom: 0.3em;">命名空间: ' + param.Namespace + '</div>';
-            html += '<div style="font-size: 1.1em; margin-bottom: 0.5em;">键名: ' + param.Key + '</div>';
-            html += '<div style="color: #999; font-family: monospace; white-space: pre-wrap; word-break: break-all; margin-bottom: 0.5em;">值: ' + valueText + '</div>';
-            if (timeText) {
-                html += '<div style="color: #666; font-size: 0.9em;">' + timeText + '</div>';
-            }
-            html += '</div>';
-            html += '<div style="margin-left: 1em; display: flex; gap: 0.5em;">';
-            html += '<button type="button" is="paper-icon-button-light" class="parameterEditBtn" data-namespace="' + param.Namespace + '" data-key="' + param.Key + '" title="编辑">';
-            html += '<i class="md-icon">edit</i>';
-            html += '</button>';
-            html += '<button type="button" is="paper-icon-button-light" class="parameterDeleteBtn" data-namespace="' + param.Namespace + '" data-key="' + param.Key + '" title="删除">';
-            html += '<i class="md-icon">delete</i>';
-            html += '</button>';
-            html += '</div>';
-            html += '</div>';
-            html += '</div>';
-        });
-
-        container.innerHTML = html;
-
-        // 绑定编辑按钮事件
-        container.querySelectorAll('.parameterEditBtn').forEach(function (btn) {
-            btn.addEventListener('click', function () {
-                var namespace = this.getAttribute('data-namespace');
-                var key = this.getAttribute('data-key');
-                var param = parameters.find(function (p) {
-                    return p.Namespace === namespace && p.Key === key;
+                var date = new Date(param.UpdatedAt);
+                timeText = date.toLocaleString('zh-CN', {
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit'
                 });
-                if (param) {
-                    showParameterDialog(param);
-                }
-            });
-        });
-
-        // 绑定删除按钮事件
-        container.querySelectorAll('.parameterDeleteBtn').forEach(function (btn) {
-            btn.addEventListener('click', function () {
-                var namespace = this.getAttribute('data-namespace');
-                var key = this.getAttribute('data-key');
-                var param = parameters.find(function (p) {
-                    return p.Namespace === namespace && p.Key === key;
+            } else if (param.CreatedAt) {
+                var date = new Date(param.CreatedAt);
+                timeText = date.toLocaleString('zh-CN', {
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit'
                 });
-                if (param) {
-                    deleteParameter(param);
-                }
+            }
+            td.appendChild(document.createTextNode(timeText));
+            td.style.fontSize = "0.9em";
+            tr.appendChild(td);
+
+            // 操作按钮
+            td = document.createElement("td");
+            td.style.textAlign = "center";
+
+            var editBtn = document.createElement("button");
+            editBtn.setAttribute("is", "paper-icon-button-light");
+            editBtn.setAttribute("title", "编辑");
+            editBtn.className = "listItemButton";
+            editBtn.innerHTML = '<i class="md-icon">edit</i>';
+            editBtn.addEventListener('click', function () {
+                showParameterDialog(param);
             });
+
+            var deleteBtn = document.createElement("button");
+            deleteBtn.setAttribute("is", "paper-icon-button-light");
+            deleteBtn.setAttribute("title", "删除");
+            deleteBtn.className = "listItemButton";
+            deleteBtn.style.marginLeft = "0.5em";
+            deleteBtn.innerHTML = '<i class="md-icon">delete</i>';
+            deleteBtn.addEventListener('click', function () {
+                deleteParameter(param);
+            });
+
+            td.appendChild(editBtn);
+            td.appendChild(deleteBtn);
+            tr.appendChild(td);
+
+            tbody.appendChild(tr);
         });
     }
 
