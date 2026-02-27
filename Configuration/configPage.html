@@ -59,20 +59,42 @@
                     <button is="emby-button" id="deleteAllBtn" type="button" class="raised emby-button" style="background:#c0392b;color:#fff;margin-left:auto;"><span>删除全部</span></button>
                 </div>
                 <div class="fieldDescription" style="margin-bottom: 1em;">共 <span id="parameterCount">0</span> 个参数</div>
-                <div id="parameterListContainer" style="width:100%; max-height:500px; overflow-y:auto; border:1px solid rgba(128,128,128,0.3); border-radius:4px;">
-                    <table style="table-layout: fixed; width: 100%; border-collapse: collapse;">
-                        <thead id="parameterTableHead" style="position:sticky; top:0; z-index:1;">
-                            <tr style="background:rgba(128,128,128,0.15);">
-                                <th style="text-align: left; width: 20%; padding: 8px 6px; border-bottom:1px solid rgba(128,128,128,0.3);">命名空间</th>
-                                <th style="text-align: left; width: 20%; padding: 8px 6px; border-bottom:1px solid rgba(128,128,128,0.3);">键名</th>
-                                <th style="text-align: left; width: 35%; padding: 8px 6px; border-bottom:1px solid rgba(128,128,128,0.3);">值</th>
-                                <th style="text-align: left; width: 15%; padding: 8px 6px; border-bottom:1px solid rgba(128,128,128,0.3);">更新时间</th>
-                                <th style="text-align: center; width: 10%; padding: 8px 6px; border-bottom:1px solid rgba(128,128,128,0.3);">操作</th>
-                            </tr>
-                        </thead>
-                        <tbody id="parameterList">
-                        </tbody>
-                    </table>
+                <div style="width:100%; border:1px solid rgba(128,128,128,0.3); border-radius:4px; overflow:hidden;">
+                    <!-- 固定表头 -->
+                    <div id="parameterHeadWrap">
+                        <table id="parameterHeadTable" style="table-layout:fixed; width:100%; border-collapse:collapse;">
+                            <colgroup>
+                                <col style="width:20%">
+                                <col style="width:20%">
+                                <col style="width:35%">
+                                <col style="width:15%">
+                                <col style="width:10%">
+                            </colgroup>
+                            <thead>
+                                <tr style="background:rgba(128,128,128,0.15);">
+                                    <th style="text-align:left; padding:8px 6px; border-bottom:1px solid rgba(128,128,128,0.3);">命名空间</th>
+                                    <th style="text-align:left; padding:8px 6px; border-bottom:1px solid rgba(128,128,128,0.3);">键名</th>
+                                    <th style="text-align:left; padding:8px 6px; border-bottom:1px solid rgba(128,128,128,0.3);">值</th>
+                                    <th style="text-align:left; padding:8px 6px; border-bottom:1px solid rgba(128,128,128,0.3);">更新时间</th>
+                                    <th style="text-align:center; padding:8px 6px; border-bottom:1px solid rgba(128,128,128,0.3);">操作</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                    <!-- 可滚动表体 -->
+                    <div id="parameterListContainer" style="max-height:460px; overflow-y:auto; overflow-x:hidden;">
+                        <table id="parameterBodyTable" style="table-layout:fixed; width:100%; border-collapse:collapse;">
+                            <colgroup>
+                                <col style="width:20%">
+                                <col style="width:20%">
+                                <col style="width:35%">
+                                <col style="width:15%">
+                                <col style="width:10%">
+                            </colgroup>
+                            <tbody id="parameterList">
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </fieldset>
 

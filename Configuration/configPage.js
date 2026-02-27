@@ -399,24 +399,21 @@ define(['loading', 'emby-input', 'emby-button', 'emby-checkbox', 'dialogHelper',
         view.addEventListener('viewshow', function () {
             loading.show();
 
-            // 动态检测页面背景色，给sticky表头设置不透明背景
+            // 补偿滚动条宽度，确保表头与表体列对齐
             try {
-                var thead = view.querySelector('#parameterTableHead');
-                if (thead) {
-                    var el = thead;
-                    var bgColor = '';
-                    while (el && el !== document.documentElement) {
-                        var cs = window.getComputedStyle(el);
-                        var bg = cs.backgroundColor;
-                        if (bg && bg !== 'transparent' && bg !== 'rgba(0, 0, 0, 0)') {
-                            bgColor = bg;
-                            break;
-                        }
-                        el = el.parentElement;
+                var bodyDiv = view.querySelector('#parameterListContainer');
+                var headTable = view.querySelector('#parameterHeadTable');
+                if (bodyDiv && headTable) {
+                    var scrollbarWidth = bodyDiv.offsetWidth - bodyDiv.clientWidth;
+                    if (scrollbarWidth > 0) {
+                        headTable.style.width = 'calc(100% - ' + scrollbarWidth + 'px)';
                     }
-                    if (!bgColor) bgColor = window.getComputedStyle(document.body).backgroundColor || '#fff';
-                    var tr = thead.querySelector('tr');
-                    if (tr) tr.style.backgroundColor = bgColor;
+                    // 滚动条出现/消失时动态调整
+                    var resizeObserver = new ResizeObserver(function () {
+                        var sw = bodyDiv.offsetWidth - bodyDiv.clientWidth;
+                        headTable.style.width = sw > 0 ? 'calc(100% - ' + sw + 'px)' : '100%';
+                    });
+                    resizeObserver.observe(bodyDiv);
                 }
             } catch (e) { }
 
