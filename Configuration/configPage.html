@@ -47,67 +47,42 @@
                     </div>
                 </form>
 
-                <div class="verticalSection verticalSection" style="margin-top: 2em;">
-                    <div class="sectionTitleContainer sectionTitleContainer-cards">
-                        <h2 class="sectionTitle sectionTitle-cards">
-                            <span>参数管理</span>
-                        </h2>
-                        <button is="emby-button" id="addParameterBtn" type="button" class="raised raised-mini submit sectionTitleButton emby-button" style="margin-left:1em;">
+                <div class="verticalSection" style="margin-top: 2em;">
+                    <div class="sectionTitleContainer flex align-items-center">
+                        <h2 class="sectionTitle">参数管理</h2>
+                        <button is="emby-button" id="addParameterBtn" type="button" class="raised button-alt headerHelpButton emby-button">
                             <i class="md-icon button-icon button-icon-left">add</i>
                             <span>添加参数</span>
                         </button>
                     </div>
 
-                    <div class="verticalSection" style="margin-top: 1em;">
-                        <div class="inputContainer" style="display: inline-block; width: 30%; margin-right: 1%;">
-                            <label class="inputLabel inputLabelUnfocused" for="searchNamespace">命名空间</label>
-                            <input id="searchNamespace" type="text" is="emby-input" placeholder="输入命名空间查询" />
-                        </div>
-                        <div class="inputContainer" style="display: inline-block; width: 30%; margin-right: 1%;">
-                            <label class="inputLabel inputLabelUnfocused" for="searchKey">键名</label>
-                            <input id="searchKey" type="text" is="emby-input" placeholder="输入键名查询" />
-                        </div>
-                        <div style="display: inline-block; width: 38%; vertical-align: bottom;">
-                            <button is="emby-button" id="searchBtn" type="button" class="raised button-submit emby-button" style="margin-top: 1.8em;">
+                    <div class="verticalSection">
+                        <div style="display: flex; gap: 1em; margin-bottom: 1em;">
+                            <div class="inputContainer" style="flex: 1;">
+                                <input id="searchNamespace" type="text" is="emby-input" placeholder="命名空间" />
+                            </div>
+                            <div class="inputContainer" style="flex: 1;">
+                                <input id="searchKey" type="text" is="emby-input" placeholder="键名" />
+                            </div>
+                            <button is="emby-button" id="searchBtn" type="button" class="raised button-submit emby-button">
                                 <i class="md-icon button-icon button-icon-left">search</i>
                                 <span>查询</span>
                             </button>
-                            <button is="emby-button" id="clearSearchBtn" type="button" class="raised emby-button" style="margin-left: 0.5em; margin-top: 1.8em;">
+                            <button is="emby-button" id="clearSearchBtn" type="button" class="raised emby-button">
                                 <span>清空</span>
                             </button>
                         </div>
-                    </div>
 
-                    <div class="fieldDescription" style="margin: 1em 0;">
-                        共 <span id="parameterCount">0</span> 个参数
-                    </div>
-
-                    <div id="parameterList" class="itemsContainer vertical-wrap"></div>
-
-                    <div id="parameterTemplate" class="listItem listItem-border listItem-hoverable hide" style="margin-bottom: 0.5em;">
-                        <div class="listItemBody" style="padding: 1em;">
-                            <div style="display: flex; justify-content: space-between; align-items: start;">
-                                <div style="flex: 1;">
-                                    <div class="listItemBodyText parameterNamespace" style="font-weight: bold; color: #00a4dc;"></div>
-                                    <div class="listItemBodyText parameterKey" style="font-size: 1.1em; margin-top: 0.3em;"></div>
-                                    <div class="listItemBodyText parameterValue" style="color: #999; margin-top: 0.5em; font-family: monospace; white-space: pre-wrap; word-break: break-all;"></div>
-                                    <div class="listItemBodyText parameterTime" style="color: #666; font-size: 0.9em; margin-top: 0.5em;"></div>
-                                </div>
-                                <div style="margin-left: 1em;">
-                                    <button type="button" is="paper-icon-button-light" class="listItemButton parameterEditBtn paper-icon-button-light" title="编辑">
-                                        <i class="md-icon">edit</i>
-                                    </button>
-                                    <button type="button" is="paper-icon-button-light" class="listItemButton parameterDeleteBtn paper-icon-button-light" title="删除">
-                                        <i class="md-icon">delete</i>
-                                    </button>
-                                </div>
-                            </div>
+                        <div class="fieldDescription" style="margin-bottom: 1em;">
+                            共 <span id="parameterCount">0</span> 个参数
                         </div>
+
+                        <div id="parameterList" class="paperList"></div>
                     </div>
                 </div>
 
-                <div class="verticalSection verticalSection-extrabottompadding" style="margin-top: 2em;">
-                    <h3>使用说明</h3>
+                <div class="verticalSection" style="margin-top: 2em;">
+                    <h3 class="sectionTitle">使用说明</h3>
                     <div class="fieldDescription" style="line-height: 1.8;">
                         <p>本插件提供参数持久化存储API，供其他插件或外部程序调用。</p>
                         <p><strong>API接口：</strong></p>

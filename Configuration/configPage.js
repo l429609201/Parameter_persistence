@@ -62,47 +62,79 @@ define(['loading', 'emby-input', 'emby-button', 'emby-checkbox', 'dialogHelper',
 
     function renderParameterList() {
         var container = currentPage.querySelector('#parameterList');
-        var template = currentPage.querySelector('#parameterTemplate');
-
         container.innerHTML = '';
         currentPage.querySelector('#parameterCount').textContent = parameters.length;
 
         if (parameters.length === 0) {
-            container.innerHTML = '<div class="fieldDescription" style="padding: 2em; text-align: center; color: #999;">暂无参数数据</div>';
+            container.innerHTML = '<div class="fieldDescription" style="padding: 2em; text-align: center; color: #999;">暂无参数数据，点击"添加参数"按钮创建新参数</div>';
             return;
         }
 
+        var html = '';
         parameters.forEach(function (param) {
-            var item = template.cloneNode(true);
-            item.classList.remove('hide');
-
-            item.querySelector('.parameterNamespace').textContent = '命名空间: ' + param.Namespace;
-            item.querySelector('.parameterKey').textContent = '键名: ' + param.Key;
-
             var valueText = param.Value || '';
-            if (valueText.length > 200) {
-                valueText = valueText.substring(0, 200) + '...';
+            if (valueText.length > 150) {
+                valueText = valueText.substring(0, 150) + '...';
             }
-            item.querySelector('.parameterValue').textContent = '值: ' + valueText;
 
             var timeText = '';
             if (param.CreatedAt) {
-                timeText += '创建: ' + new Date(param.CreatedAt).toLocaleString('zh-CN');
+                timeText = '创建: ' + new Date(param.CreatedAt).toLocaleString('zh-CN');
             }
             if (param.UpdatedAt) {
-                timeText += ' | 更新: ' + new Date(param.UpdatedAt).toLocaleString('zh-CN');
+                timeText += (timeText ? ' | ' : '') + '更新: ' + new Date(param.UpdatedAt).toLocaleString('zh-CN');
             }
-            item.querySelector('.parameterTime').textContent = timeText;
 
-            item.querySelector('.parameterEditBtn').addEventListener('click', function () {
-                showParameterDialog(param);
+            html += '<div class="listItem listItem-border" style="padding: 1em; margin-bottom: 0.5em;">';
+            html += '<div style="display: flex; justify-content: space-between; align-items: start;">';
+            html += '<div style="flex: 1;">';
+            html += '<div style="font-weight: bold; color: #00a4dc; margin-bottom: 0.3em;">命名空间: ' + param.Namespace + '</div>';
+            html += '<div style="font-size: 1.1em; margin-bottom: 0.5em;">键名: ' + param.Key + '</div>';
+            html += '<div style="color: #999; font-family: monospace; white-space: pre-wrap; word-break: break-all; margin-bottom: 0.5em;">值: ' + valueText + '</div>';
+            if (timeText) {
+                html += '<div style="color: #666; font-size: 0.9em;">' + timeText + '</div>';
+            }
+            html += '</div>';
+            html += '<div style="margin-left: 1em; display: flex; gap: 0.5em;">';
+            html += '<button type="button" is="paper-icon-button-light" class="parameterEditBtn" data-namespace="' + param.Namespace + '" data-key="' + param.Key + '" title="编辑">';
+            html += '<i class="md-icon">edit</i>';
+            html += '</button>';
+            html += '<button type="button" is="paper-icon-button-light" class="parameterDeleteBtn" data-namespace="' + param.Namespace + '" data-key="' + param.Key + '" title="删除">';
+            html += '<i class="md-icon">delete</i>';
+            html += '</button>';
+            html += '</div>';
+            html += '</div>';
+            html += '</div>';
+        });
+
+        container.innerHTML = html;
+
+        // 绑定编辑按钮事件
+        container.querySelectorAll('.parameterEditBtn').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var namespace = this.getAttribute('data-namespace');
+                var key = this.getAttribute('data-key');
+                var param = parameters.find(function (p) {
+                    return p.Namespace === namespace && p.Key === key;
+                });
+                if (param) {
+                    showParameterDialog(param);
+                }
             });
+        });
 
-            item.querySelector('.parameterDeleteBtn').addEventListener('click', function () {
-                deleteParameter(param);
+        // 绑定删除按钮事件
+        container.querySelectorAll('.parameterDeleteBtn').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var namespace = this.getAttribute('data-namespace');
+                var key = this.getAttribute('data-key');
+                var param = parameters.find(function (p) {
+                    return p.Namespace === namespace && p.Key === key;
+                });
+                if (param) {
+                    deleteParameter(param);
+                }
             });
-
-            container.appendChild(item);
         });
     }
 
