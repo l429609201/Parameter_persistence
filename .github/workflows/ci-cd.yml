@@ -107,25 +107,6 @@ jobs:
       run: |
         mkdir -p release
         cp bin/Release/netstandard2.0/${{ env.PROJECT_NAME }}.dll release/
-        cp bin/Release/netstandard2.0/${{ env.PROJECT_NAME }}.xml release/ || true
-        cp README.md release/
-        cp 设计方案.md release/
-        cp version.json release/
-
-        # 创建版本信息文件
-        cat > release/VERSION.txt << EOF
-        插件名称: ${{ steps.version_info.outputs.NAME }}
-        版本号: ${{ steps.version_info.outputs.VERSION }}
-        编译时间: $(date +'%Y-%m-%d %H:%M:%S')
-        提交哈希: $(git rev-parse --short HEAD)
-        编译环境: Ubuntu Latest + .NET ${{ env.DOTNET_VERSION }}
-
-        版本说明:
-        ${{ steps.version_info.outputs.DESCRIPTION }}
-
-        备注:
-        ${{ steps.version_info.outputs.NOTES }}
-        EOF
 
         echo "📁 发布文件列表:"
         ls -lh release/
@@ -216,10 +197,6 @@ jobs:
         body_path: release_notes.md
         files: |
           release/${{ env.PROJECT_NAME }}.dll
-          release/README.md
-          release/设计方案.md
-          release/VERSION.txt
-          release/version.json
           ${{ env.PROJECT_NAME }}-${{ steps.version_info.outputs.VERSION }}.zip
         draft: false
         prerelease: false
