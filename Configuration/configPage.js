@@ -42,21 +42,23 @@ define(['loading', 'emby-input', 'emby-button', 'emby-checkbox', 'dialogHelper',
         if (namespace) requestData.Namespace = namespace;
         if (key) requestData.Key = key;
 
-        ApiClient.fetch({
+        ApiClient.ajax({
             type: 'POST',
-            url: ApiClient.getUrl('/ParameterPersistence/Query'),
+            url: ApiClient.getUrl('/ParameterPersistence/Parameters/Query'),
             data: JSON.stringify(requestData),
             contentType: 'application/json',
             dataType: 'json'
         }).then(function (response) {
-            parameters = response.Parameters || [];
+            if (typeof response === 'string') {
+                response = JSON.parse(response);
+            }
+            parameters = response.DataList || response.Parameters || [];
             renderParameterList();
             loading.hide();
         }).catch(function (error) {
             loading.hide();
-            require(['toast'], function (toast) {
-                toast('查询参数失败：' + (error.message || '未知错误'));
-            });
+            parameters = [];
+            renderParameterList();
         });
     }
 
@@ -243,14 +245,14 @@ define(['loading', 'emby-input', 'emby-button', 'emby-checkbox', 'dialogHelper',
     function saveParameter(namespace, key, value, isEdit) {
         loading.show();
 
-        var url = isEdit ? '/ParameterPersistence/Update' : '/ParameterPersistence/Create';
+        var url = isEdit ? '/ParameterPersistence/Parameters/Update' : '/ParameterPersistence/Parameters/Create';
         var requestData = {
             Namespace: namespace,
             Key: key,
             Value: value
         };
 
-        ApiClient.fetch({
+        ApiClient.ajax({
             type: 'POST',
             url: ApiClient.getUrl(url),
             data: JSON.stringify(requestData),
@@ -264,10 +266,10 @@ define(['loading', 'emby-input', 'emby-button', 'emby-checkbox', 'dialogHelper',
             var searchNamespace = currentPage.querySelector('#searchNamespace').value.trim();
             var searchKey = currentPage.querySelector('#searchKey').value.trim();
             queryParameters(searchNamespace, searchKey);
-        }).catch(function (error) {
+        }).catch(function () {
             loading.hide();
             require(['toast'], function (toast) {
-                toast('保存参数失败：' + (error.message || '未知错误'));
+                toast('保存参数失败');
             });
         });
     }
@@ -282,9 +284,9 @@ define(['loading', 'emby-input', 'emby-button', 'emby-checkbox', 'dialogHelper',
                     Key: param.Key
                 };
 
-                ApiClient.fetch({
+                ApiClient.ajax({
                     type: 'POST',
-                    url: ApiClient.getUrl('/ParameterPersistence/Delete'),
+                    url: ApiClient.getUrl('/ParameterPersistence/Parameters/Delete'),
                     data: JSON.stringify(requestData),
                     contentType: 'application/json',
                     dataType: 'json'

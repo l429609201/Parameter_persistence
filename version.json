@@ -1,14 +1,15 @@
 {
-  "version": "1.0.8",
+  "version": "1.0.9",
   "name": "EMBY 参数持久化插件",
-  "description": "修复依赖注入错误和HTML格式问题",
+  "description": "修复空引用异常和API调用问题",
   "changelog": [
-    "🐛 修复IParameterStorageService未注册导致API返回500错误",
-    "🔧 修复HTML格式，去掉DOCTYPE/html/head/body标签，符合EMBY规范",
-    "🎨 参考danmu插件HTML结构重构配置页面",
-    "⚡ Controller改为直接创建StorageService实例"
+    "🐛 修复Plugin.Instance空引用导致的NullReferenceException",
+    "🐛 修复ValidateAuthentication中auth.User空引用",
+    "🔧 JS端API调用从fetch改为ajax（参考danmu插件）",
+    "🔧 修正JS端API路径与Controller路由一致",
+    "🎨 去掉HTML的DOCTYPE/html/head/body标签，符合EMBY规范"
   ],
   "breaking_changes": [],
-  "notes": "修复关键Bug：依赖注入和HTML格式"
+  "notes": "修复关键Bug：空引用异常和API调用方式"
 }
 
