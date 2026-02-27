@@ -272,6 +272,15 @@ define(['loading', 'emby-input', 'emby-button', 'emby-checkbox', 'dialogHelper',
 
             ApiClient.getPluginConfiguration(pluginId).then(function (config) {
                 loadConfig(view, config);
+
+                // 获取插件信息并显示版本号
+                ApiClient.getInstalledPlugins().then(function (plugins) {
+                    var plugin = plugins.find(function (p) { return p.Id === pluginId; });
+                    if (plugin) {
+                        view.querySelector('#pluginVersion').textContent = 'v' + plugin.Version;
+                    }
+                });
+
                 loading.hide();
                 queryParameters('', '');
             }, function () {
