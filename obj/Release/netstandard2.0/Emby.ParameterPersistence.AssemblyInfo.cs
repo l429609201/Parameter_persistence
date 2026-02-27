@@ -12,11 +12,11 @@ using System.Reflection;
 
 [assembly: System.Reflection.AssemblyCompanyAttribute("Emby.ParameterPersistence")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
-[assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c95566774317622b24b448ca4eca2ebebb5ebf3c")]
+[assembly: System.Reflection.AssemblyFileVersionAttribute("1.2.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+fb7c24f58e92134816c9bed6e426253e594873c6")]
 [assembly: System.Reflection.AssemblyProductAttribute("Emby.ParameterPersistence")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Emby.ParameterPersistence")]
-[assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
+[assembly: System.Reflection.AssemblyVersionAttribute("1.2.0.0")]
 
 // 由 MSBuild WriteCodeFragment 类生成。
 

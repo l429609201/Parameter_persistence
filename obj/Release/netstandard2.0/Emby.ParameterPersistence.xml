@@ -109,6 +109,16 @@
             参数持久化插件主类
             </summary>
         </member>
+        <member name="M:Emby.ParameterPersistence.Plugin.SetVersionFromResource">
+            <summary>
+            从嵌入的 version.json 读取版本号并通过反射写入父类
+            </summary>
+        </member>
+        <member name="M:Emby.ParameterPersistence.Plugin.ReadVersionFromResource">
+            <summary>
+            从嵌入的 version.json 中读取版本号
+            </summary>
+        </member>
         <member name="T:Emby.ParameterPersistence.Services.IParameterStorageService">
             <summary>
             参数存储服务接口

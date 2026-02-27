@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <AssemblyVersion>1.0.0.0</AssemblyVersion>
-    <FileVersion>1.0.0.0</FileVersion>
+    <AssemblyVersion>1.2.0.0</AssemblyVersion>
+    <FileVersion>1.2.0.0</FileVersion>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>CS1591</NoWarn>
   </PropertyGroup>
@@ -16,6 +16,7 @@
   <ItemGroup>
     <EmbeddedResource Include="Configuration\configPage.html" />
     <EmbeddedResource Include="Configuration\configPage.js" />
+    <EmbeddedResource Include="version.json" />
   </ItemGroup>
 
 </Project>

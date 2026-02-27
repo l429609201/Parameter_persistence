@@ -1,1 +1,1 @@
-﻿{"version":"1.1.4","name":"EMBY 参数持久化插件","description":"修复表头重叠和版本号不显示问题","changelog":["修复表头与数据行重叠：拆分为独立表头+可滚动表体结构","修复关于区域版本号不显示：去掉emby-linkbutton避免Shadow DOM","关于区域卡片颜色适配浅色/深色双主题"],"breaking_changes":[],"notes":"纯前端UI修复，无API变更"}
+﻿{"version":"1.2.0","name":"EMBY 参数持久化插件","description":"版本号统一由version.json管理","changelog":["version.json打包为嵌入资源","Plugin.cs启动时从version.json读取版本号","表头列对齐优化：双表+colgroup+滚动条宽度补偿","搜索框改为前端模糊过滤","版本号显示修复：Id比较改为大小写不敏感"],"breaking_changes":[],"notes":"以后只需修改version.json中的version字段即可更新版本号"}
