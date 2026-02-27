@@ -56,21 +56,6 @@ jobs:
           echo "should_release=true" >> $GITHUB_OUTPUT
         fi
 
-    - name: 创建标签
-      if: steps.check_tag.outputs.should_release == 'true'
-      run: |
-        VERSION="${{ steps.read_version.outputs.VERSION }}"
-        DESCRIPTION="${{ steps.read_version.outputs.DESCRIPTION }}"
-        TAG="v$VERSION"
-
-        git config user.name "github-actions[bot]"
-        git config user.email "github-actions[bot]@users.noreply.github.com"
-
-        git tag -a "$TAG" -m "$DESCRIPTION"
-        git push origin "$TAG"
-
-        echo "✅ 已创建并推送标签: $TAG"
-
   build-and-release:
     name: 编译并发布
     needs: check-version
