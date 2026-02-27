@@ -59,17 +59,17 @@ namespace Emby.ParameterPersistence
                 var resourceName = "Emby.ParameterPersistence.version.json";
                 using (var stream = assembly.GetManifestResourceStream(resourceName))
                 {
-                    if (stream == null) return new Version(1, 0, 0, 0);
+                    if (stream == null) return new Version(1, 0, 0);
                     using (var reader = new StreamReader(stream))
                     {
                         var json = reader.ReadToEnd();
                         // 简单解析 "version":"x.x.x"，不引入额外依赖
                         var key = "\"version\":\"";
                         var start = json.IndexOf(key, StringComparison.Ordinal);
-                        if (start < 0) return new Version(1, 0, 0, 0);
+                        if (start < 0) return new Version(1, 0, 0);
                         start += key.Length;
                         var end = json.IndexOf('"', start);
-                        if (end < 0) return new Version(1, 0, 0, 0);
+                        if (end < 0) return new Version(1, 0, 0);
                         var versionStr = json.Substring(start, end - start);
                         return Version.Parse(versionStr);
                     }
@@ -77,7 +77,7 @@ namespace Emby.ParameterPersistence
             }
             catch
             {
-                return new Version(1, 0, 0, 0);
+                return new Version(1, 0, 0);
             }
         }
 
