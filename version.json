@@ -1,1 +1,1 @@
-﻿{"version":"1.2.0","name":"EMBY 参数持久化插件","description":"版本号统一由version.json管理","changelog":["version.json打包为嵌入资源","Plugin.cs启动时从version.json读取版本号","表头列对齐优化：双表+colgroup+滚动条宽度补偿","搜索框改为前端模糊过滤","版本号显示修复：Id比较改为大小写不敏感"],"breaking_changes":[],"notes":"以后只需修改version.json中的version字段即可更新版本号"}
+﻿{"version":"1.2.1","name":"EMBY 参数持久化插件","description":"版本号修正","changelog":["version.json打包为嵌入资源","Plugin.cs启动时从version.json读取版本号","表头列对齐优化：双表+colgroup+滚动条宽度补偿","搜索框改为前端模糊过滤","版本号显示修复：Id比较改为大小写不敏感"],"breaking_changes":[],"notes":"以后只需修改version.json中的version字段即可更新版本号"}
