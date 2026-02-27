@@ -38,12 +38,13 @@ namespace Emby.ParameterPersistence
             try
             {
                 var version = ReadVersionFromResource();
-                // BasePlugin 内部用 _version 字段存储版本，通过反射覆盖它
-                var field = typeof(BasePlugin<PluginConfiguration>).BaseType?
-                    .GetField("_version", BindingFlags.NonPublic | BindingFlags.Instance)
-                    ?? typeof(BasePlugin<PluginConfiguration>)
-                    .GetField("_version", BindingFlags.NonPublic | BindingFlags.Instance);
-                field?.SetValue(this, version);
+                // BasePlugin.Version 是自动属性，编译器生成的 backing field 名为 <Version>k__BackingField
+                var field = typeof(BasePlugin<PluginConfiguration>)
+                    .GetField("<Version>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance);
+                if (field != null)
+                {
+                    field.SetValue(this, version);
+                }
             }
             catch { }
         }
